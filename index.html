@@ -1,0 +1,1430 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TKX Export Jobs</title><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-180.png"><link rel="icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="TKX Jobs"><meta name="theme-color" content="#1F1F1D"><style>
+:root{--bg:#F6F5F2;--card:#FFFFFF;--soft:#F1EFE8;--line:#E3E1DA;--txt:#1F1F1D;--mut:#6B6A65;--acc:#185FA5;--acc-bg:#E6F1FB;
+--red:#A32D2D;--red-bg:#FCEBEB;--amb:#854F0B;--amb-bg:#FAEEDA;--grn:#3B6D11;--grn-bg:#EAF3DE;--r:8px}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--txt);font-size:14px}
+a{color:var(--acc);text-decoration:none}
+header.top{display:flex;align-items:center;gap:18px;padding:10px 20px;background:var(--card);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+header.top .brand{font-weight:600;font-size:15px;white-space:nowrap}
+nav.main{display:flex;gap:4px;flex:1}
+nav.main a{padding:7px 12px;border-radius:var(--r);color:var(--mut)}
+nav.main a.on{background:var(--soft);color:var(--txt);font-weight:500}
+.user{font-size:12px;color:var(--mut);white-space:nowrap}
+main{padding:18px 20px 90px;max-width:1280px;margin:0 auto}
+h1{font-size:20px;font-weight:600;margin:0 0 4px}h2{font-size:15px;font-weight:600;margin:0 0 10px}
+.sub{color:var(--mut);font-size:13px;margin:0 0 14px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.grid{display:grid;gap:12px}.g4{grid-template-columns:repeat(4,minmax(0,1fr))}.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.kpi p{margin:0;font-size:12px;color:var(--mut)}.kpi b{display:block;font-size:20px;font-weight:600;margin-top:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+table.t{width:100%;border-collapse:collapse;font-size:13px}
+table.t th{text-align:left;font-weight:500;color:var(--mut);padding:7px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.t td{padding:8px 6px;border-bottom:1px solid var(--line);vertical-align:middle}
+table.t tr.click{cursor:pointer}table.t tr.click:hover td{background:#FAFAF7}
+.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.pill{display:inline-block;font-size:11px;padding:2px 7px;border-radius:6px;white-space:nowrap;background:var(--soft);color:var(--mut)}
+.p-danger{background:var(--red-bg);color:var(--red)}.p-warning{background:var(--amb-bg);color:var(--amb)}
+.p-info{background:var(--acc-bg);color:var(--acc)}.p-ok{background:var(--grn-bg);color:var(--grn)}
+.bar{height:5px;background:var(--soft);border-radius:3px;overflow:hidden;margin-top:3px;min-width:60px}.bar i{display:block;height:100%;background:var(--acc)}
+.dots span{display:inline-block;width:9px;height:9px;border-radius:50%;border:1.5px solid var(--grn);margin-right:2px}
+.dots span.on{background:var(--grn)}.dots span.na{border-color:var(--line);background:var(--soft)}
+.red{color:var(--red)}.grn{color:var(--grn)}.amb{color:var(--amb)}.mut{color:var(--mut)}
+button,.btn{font:inherit;font-size:13px;padding:7px 12px;border-radius:var(--r);border:1px solid var(--line);background:var(--card);color:var(--txt);cursor:pointer;white-space:nowrap}
+button:hover{background:var(--soft)}button.pri{background:var(--txt);color:#fff;border-color:var(--txt)}button.pri:hover{background:#3a3a37}
+button.sm{padding:4px 8px;font-size:12px}button.link{border:none;background:none;color:var(--acc);padding:2px 4px}
+input,select,textarea{font:inherit;font-size:14px;padding:7px 9px;border:1px solid var(--line);border-radius:var(--r);background:#fff;width:100%;color:var(--txt)}
+textarea{min-height:64px}
+label.f{display:block;font-size:12px;color:var(--mut);margin-bottom:10px}label.f>input,label.f>select,label.f>textarea{margin-top:3px}
+.fgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.fgrid .full{grid-column:1/-1}
+.timeline{display:flex;gap:2px;margin:6px 0 4px}
+.timeline .st{flex:1;text-align:center;font-size:11px;color:var(--mut)}
+.timeline .st i{display:block;width:14px;height:14px;border-radius:50%;margin:0 auto 4px;border:2px solid var(--line)}
+.timeline .st.done i{background:var(--grn);border-color:var(--grn)}.timeline .st.late i{border-color:var(--red);background:var(--red-bg)}
+.timeline .st.next i{border-color:var(--amb)}
+.alert{border-radius:var(--r);padding:9px 11px;margin-bottom:8px;font-size:13px;line-height:1.45;display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.alert.danger{background:var(--red-bg);color:var(--red)}.alert.warning{background:var(--amb-bg);color:var(--amb)}.alert.info{background:var(--acc-bg);color:var(--acc)}
+.alert b{font-weight:600}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:flex-start;justify-content:center;z-index:20;overflow:auto;padding:30px 12px}
+#modal.on{display:flex}#modal .box{background:#fff;border-radius:12px;width:100%;max-width:620px;padding:18px 20px}
+#toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:var(--txt);color:#fff;padding:9px 16px;border-radius:var(--r);font-size:13px;display:none;z-index:30}
+#loading{position:fixed;top:0;left:0;right:0;height:3px;background:var(--acc);display:none;z-index:40}
+.empty{padding:24px;text-align:center;color:var(--mut)}
+.hint{font-size:12px;color:var(--mut)}.err{color:var(--red);font-size:12px;margin:6px 0}
+nav.bottom{display:none}
+@media (max-width:760px){
+  header.top{padding:10px 14px}nav.main,.user{display:none}
+  main{padding:14px 12px 90px}
+  .g4{grid-template-columns:repeat(2,minmax(0,1fr))}.g2,.fgrid{grid-template-columns:1fr}
+  table.t.resp thead{display:none}table.t.resp tr{display:block;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;padding:6px 10px;background:#fff}
+  table.t.resp td{display:flex;justify-content:space-between;border:none;padding:4px 0}
+  table.t.resp td::before{content:attr(data-l);color:var(--mut);font-size:12px;margin-right:10px}
+  nav.bottom{display:flex;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);z-index:10}
+  nav.bottom a{flex:1;text-align:center;padding:9px 0 11px;font-size:11px;color:var(--mut)}nav.bottom a.on{color:var(--txt);font-weight:600}
+  nav.bottom a .ic{display:block;font-size:17px;line-height:1.2}
+  .hide-m{display:none}
+}
+
+</style></head><body>
+<div id="loading"></div><div style="background:#FAEEDA;color:#854F0B;font-size:12px;padding:6px 14px;text-align:center">Demo — fictitious data kept in this browser only · Claude document reading is off in the demo · <a href="#" onclick="resetDemo();return false" style="color:#854F0B;text-decoration:underline">Reset demo data</a></div>
+<header class="top"><span class="brand">TKX Export Jobs</span>
+<nav class="main"><a href="#dashboard" data-v="dashboard">Dashboard</a><a href="#jobs" data-v="jobs">Jobs</a><a href="#payments" data-v="payments">Payments</a><a href="#report" data-v="report">Report</a><a href="#schedule" data-v="schedule">Schedule</a>
+<a href="#alerts" data-v="alerts">Alerts</a><a href="#quotes" data-v="quotes">Quotes</a><a href="#settings" data-v="settings">Settings</a></nav><span class="user" id="who"></span></header>
+<main id="app"><div class="empty">Loading…</div></main>
+<nav class="bottom"><a href="#dashboard" data-v="dashboard"><span class="ic">▦</span>Home</a><a href="#jobs" data-v="jobs"><span class="ic">☰</span>Jobs</a>
+<a href="#report" data-v="report"><span class="ic">▤</span>Report</a><a href="#alerts" data-v="alerts"><span class="ic">!</span>Alerts</a></nav>
+<div id="modal"><div class="box" id="modalBox"></div></div><div id="toast"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="seed.js"></script><script src="demo_claude.js"></script>
+<script>/* logic_en.js — pure business logic (no I/O). Dates are 'YYYY-MM-DD' strings; reporting currency USD. */
+
+var LOGIC_DEFAULTS = {
+  CLIENT_DAYS_BEFORE_ETD: 10,
+  SUPPLIER_DAYS_BEFORE_ETD: 0,
+  FREIGHT_DAYS_BEFORE_ETD: 0,
+  WARN_DAYS: 5,
+  ETD_NOTICE_DAYS: 7,
+  ETA_NOTICE_DAYS: 5,
+  BL_DAYS_AFTER_ETD: 7,
+  PRESHIP_DOC_DAYS_BEFORE_ETD: 3,
+  DOC_SEND_DAYS: 2,
+  TOLERANCE_USD: 50
+};
+var CLIENT_FACING_DOCS = ['BL', 'BIETC', 'Inspection', 'Sales invoice', 'Certificate of origin', 'Packing list'];
+var PRESHIP_DOCS = ['BIETC', 'Inspection'];
+var COMMIT_CATEGORIES = ['Supplier', 'Freight', 'Inspection', 'BIETC', 'Commission', 'Other'];
+var CLOSED_STATUSES = ['Closed', 'Cancelled'];
+
+function lgCfg(cfg) {
+  var out = {};
+  for (var k in LOGIC_DEFAULTS) out[k] = LOGIC_DEFAULTS[k];
+  if (cfg) for (var c in cfg) {
+    if (cfg[c] === '' || cfg[c] === null || cfg[c] === undefined) continue;
+    out[c] = (typeof LOGIC_DEFAULTS[c] === 'number') ? Number(cfg[c]) : cfg[c];
+  }
+  return out;
+}
+function lgDay(s) {
+  if (!s) return null;
+  var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (!m) return null;
+  return Math.floor(Date.UTC(+m[1], +m[2] - 1, +m[3]) / 86400000);
+}
+function lgDate(day) { if (day === null || day === undefined) return ''; return new Date(day * 86400000).toISOString().slice(0, 10); }
+function lgAddDays(s, n) { var d = lgDay(s); return d === null ? '' : lgDate(d + n); }
+function lgNum(v) { if (v === null || v === undefined || v === '') return 0; if (typeof v === 'number') return v; return lgParseAmount(String(v)); }
+function lgParseAmount(s) {
+  s = String(s).replace(/[\s ']/g, '');
+  if (!s) return 0;
+  var lc = s.lastIndexOf(','), ld = s.lastIndexOf('.');
+  if (lc > -1 && ld > -1) { s = lc > ld ? s.replace(/\./g, '').replace(',', '.') : s.replace(/,/g, ''); }
+  else if (lc > -1) {
+    var dec = s.length - lc - 1, commas = (s.match(/,/g) || []).length;
+    s = (commas === 1 && dec !== 3) ? s.replace(',', '.') : s.replace(/,/g, '');
+  }
+  var n = parseFloat(s);
+  return isNaN(n) ? 0 : n;
+}
+function lgToUSD(amount, ccy, rate) {
+  amount = lgNum(amount);
+  if (!ccy || ccy === 'USD') return amount;
+  var r = lgNum(rate);
+  return r > 0 ? amount / r : 0;
+}
+function lgRound(n) { return Math.round(n * 100) / 100; }
+function lgTrue(v) { return v === true || v === 'TRUE' || v === 'true' || v === 1; }
+
+function lgSummarizeJob(job, commitments, txs, docs, cfg, today) {
+  cfg = lgCfg(cfg);
+  var tol = cfg.TOLERANCE_USD;
+  var s = { jobId: job.jobId, pfi: job.salesPfi, client: job.client, country: job.country,
+    etd: job.etd || '', eta: job.eta || '', manualStatus: job.status || '',
+    saleUSD: lgRound(lgToUSD(job.saleAmount, job.saleCcy, job.saleRate)),
+    receivedUSD: 0, commit: {}, paid: {}, due: {}, deadlines: {}, missingFx: false, cashWithoutProof: 0 };
+  COMMIT_CATEGORIES.forEach(function (c) { s.commit[c] = 0; s.paid[c] = 0; s.due[c] = 0; });
+  if (job.saleCcy && job.saleCcy !== 'USD' && !(lgNum(job.saleRate) > 0)) s.missingFx = true;
+  var earliest = {};
+  commitments.forEach(function (e) {
+    var cat = COMMIT_CATEGORIES.indexOf(e.category) > -1 ? e.category : 'Other';
+    if (e.ccy && e.ccy !== 'USD' && !(lgNum(e.rate) > 0)) s.missingFx = true;
+    s.commit[cat] += lgToUSD(e.amount, e.ccy, e.rate);
+    if (e.dueDate) { var d = lgDay(e.dueDate); if (earliest[cat] === undefined || d < earliest[cat]) earliest[cat] = d; }
+  });
+  txs.forEach(function (t) {
+    if (t.ccy && t.ccy !== 'USD' && !(lgNum(t.rate) > 0)) s.missingFx = true;
+    var usd = lgToUSD(t.amount, t.ccy, t.rate);
+    if (t.dir === 'IN') s.receivedUSD += usd;
+    else {
+      var cat = COMMIT_CATEGORIES.indexOf(t.category) > -1 ? t.category : 'Other';
+      s.paid[cat] += usd;
+      if (t.mode === 'Cash' && !t.fileId) s.cashWithoutProof++;
+    }
+  });
+  var tc = 0, tp = 0;
+  COMMIT_CATEGORIES.forEach(function (c) {
+    s.commit[c] = lgRound(s.commit[c]); s.paid[c] = lgRound(s.paid[c]);
+    s.due[c] = lgRound(Math.max(0, s.commit[c] - s.paid[c])); if (s.due[c] < tol) s.due[c] = 0;
+    tc += s.commit[c]; tp += s.paid[c];
+  });
+  s.receivedUSD = lgRound(s.receivedUSD);
+  s.receivableUSD = lgRound(Math.max(0, s.saleUSD - s.receivedUSD)); if (s.receivableUSD < tol) s.receivableUSD = 0;
+  s.totalCommitUSD = lgRound(tc); s.totalPaidUSD = lgRound(tp);
+  s.totalDueUSD = lgRound(COMMIT_CATEGORIES.reduce(function (a, c) { return a + s.due[c]; }, 0));
+  s.cashNetUSD = lgRound(s.receivedUSD - s.totalPaidUSD);
+  s.expectedMarginUSD = lgRound(s.saleUSD - s.totalCommitUSD);
+  s.pctReceived = s.saleUSD > 0 ? Math.min(100, Math.round(s.receivedUSD / s.saleUSD * 100)) : 0;
+  s.pctSupplierPaid = s.commit.Supplier > 0 ? Math.min(100, Math.round(s.paid.Supplier / s.commit.Supplier * 100)) : 0;
+  if (s.etd) {
+    s.deadlines.client = lgAddDays(s.etd, -cfg.CLIENT_DAYS_BEFORE_ETD);
+    s.deadlines.Supplier = lgAddDays(s.etd, -cfg.SUPPLIER_DAYS_BEFORE_ETD);
+    s.deadlines.Freight = lgAddDays(s.etd, -cfg.FREIGHT_DAYS_BEFORE_ETD);
+  }
+  COMMIT_CATEGORIES.forEach(function (c) {
+    if (earliest[c] !== undefined) {
+      var rule = s.deadlines[c] ? lgDay(s.deadlines[c]) : null;
+      s.deadlines[c] = lgDate(rule === null ? earliest[c] : Math.min(rule, earliest[c]));
+    } else if (!s.deadlines[c] && s.etd) s.deadlines[c] = s.etd;
+  });
+  var req = 0, rec = 0, toSend = 0;
+  s.docs = docs.map(function (d) {
+    var required = d.status !== 'N/A'; if (required) req++;
+    var received = d.status === 'Received'; if (required && received) rec++;
+    var mustSend = received && CLIENT_FACING_DOCS.indexOf(d.type) > -1 && !lgTrue(d.sentToClient);
+    if (mustSend) toSend++;
+    return { id: d.id, type: d.type, status: d.status, sent: lgTrue(d.sentToClient), mustSend: mustSend };
+  });
+  s.docsRequired = req; s.docsReceived = rec; s.docsToSend = toSend;
+  s.status = lgStatus(s, today);
+  return s;
+}
+function lgStatus(s, today) {
+  if (CLOSED_STATUSES.indexOf(s.manualStatus) > -1) return s.manualStatus;
+  var t = lgDay(today), etd = lgDay(s.etd), eta = lgDay(s.eta), phase = 'Preparing';
+  if (etd !== null && t >= etd) phase = 'At sea';
+  if (eta !== null && t >= eta) phase = 'Arrived';
+  if (phase === 'Arrived' && s.receivableUSD === 0 && s.totalDueUSD === 0 && s.docsReceived >= s.docsRequired && s.docsToSend === 0) phase = 'Ready to close';
+  return phase;
+}
+function lgSchedule(summaries) {
+  var rec = [], pay = [];
+  summaries.forEach(function (s) {
+    if (CLOSED_STATUSES.indexOf(s.status) > -1) return;
+    if (s.receivableUSD > 0) rec.push({ jobId: s.jobId, pfi: s.pfi, party: s.client, label: 'Client balance', amountUSD: s.receivableUSD, date: s.deadlines.client || '' });
+    COMMIT_CATEGORIES.forEach(function (c) { if (s.due[c] > 0) pay.push({ jobId: s.jobId, pfi: s.pfi, party: s.client, label: c, amountUSD: s.due[c], date: s.deadlines[c] || '' }); });
+  });
+  var byDate = function (a, b) { return (a.date || '9999') < (b.date || '9999') ? -1 : 1; };
+  return { receivables: rec.sort(byDate), payables: pay.sort(byDate) };
+}
+function lgAlerts(summaries, docsByJob, cfg, today) {
+  cfg = lgCfg(cfg);
+  var t = lgDay(today), out = [];
+  function push(level, s, type, msg, date, amount) {
+    out.push({ level: level, jobId: s.jobId, pfi: s.pfi, client: s.client, type: type, message: msg, date: date || '', amountUSD: amount || 0 });
+  }
+  function check(s, amount, date, late, soon) {
+    if (!(amount > 0) || !date) return;
+    var d = lgDay(date);
+    if (t > d) push('danger', s, late, late + ' (D+' + (t - d) + ')', date, amount);
+    else if (d - t <= cfg.WARN_DAYS) push('warning', s, soon, soon + ' (D-' + (d - t) + ')', date, amount);
+  }
+  summaries.forEach(function (s) {
+    if (CLOSED_STATUSES.indexOf(s.status) > -1) return;
+    check(s, s.receivableUSD, s.deadlines.client, 'Client balance overdue', 'Collect client balance');
+    check(s, s.due.Supplier, s.deadlines.Supplier, 'Supplier payment overdue', 'Pay supplier');
+    check(s, s.due.Freight, s.deadlines.Freight, 'Freight invoice overdue', 'Pay freight');
+    ['Inspection', 'BIETC', 'Commission', 'Other'].forEach(function (c) { check(s, s.due[c], s.deadlines[c], c + ' payment overdue', 'Pay ' + c); });
+    var etd = lgDay(s.etd), eta = lgDay(s.eta);
+    if (etd !== null && etd >= t && etd - t <= cfg.ETD_NOTICE_DAYS) push('info', s, 'Departure', 'Departure due (D-' + (etd - t) + ')', s.etd);
+    if (eta !== null && eta >= t && eta - t <= cfg.ETA_NOTICE_DAYS) push('info', s, 'Arrival', 'Arrival due (D-' + (eta - t) + ')', s.eta);
+    if (s.missingFx) push('warning', s, 'Missing FX rate', 'FX rate missing on a foreign-currency line', '');
+    if (s.cashWithoutProof > 0) push('info', s, 'Cash proof', s.cashWithoutProof + ' cash payment(s) without receipt', '');
+    (docsByJob[s.jobId] || []).forEach(function (d) {
+      if (d.status === 'N/A') return;
+      if (d.status !== 'Received') {
+        if (d.type === 'BL' && etd !== null && t > etd + cfg.BL_DAYS_AFTER_ETD)
+          push('warning', s, 'BL missing', 'BL not received (ETD + ' + (t - etd) + ' days)', lgDate(etd + cfg.BL_DAYS_AFTER_ETD));
+        if (PRESHIP_DOCS.indexOf(d.type) > -1 && etd !== null && t > etd - cfg.PRESHIP_DOC_DAYS_BEFORE_ETD)
+          push(t > etd ? 'danger' : 'warning', s, d.type + ' missing', d.type + ' not received before departure', lgDate(etd - cfg.PRESHIP_DOC_DAYS_BEFORE_ETD));
+        if (d.type === 'Sales invoice' && etd !== null && t > etd)
+          push('warning', s, 'Sales invoice', 'Sales invoice not issued after departure', s.etd);
+      } else if (CLIENT_FACING_DOCS.indexOf(d.type) > -1 && !lgTrue(d.sentToClient)) {
+        var r = lgDay(d.receivedOn), late = r !== null && t - r > cfg.DOC_SEND_DAYS;
+        push(late ? 'warning' : 'info', s, 'To send', d.type + ' received, not sent to client', r !== null ? lgDate(r + cfg.DOC_SEND_DAYS) : '');
+      }
+    });
+  });
+  var rank = { danger: 0, warning: 1, info: 2 };
+  return out.sort(function (a, b) { return rank[a.level] - rank[b.level] || ((a.date || '9999') < (b.date || '9999') ? -1 : 1); });
+}
+function lgKpis(summaries, schedule, today) {
+  var t = lgDay(today), active = summaries.filter(function (s) { return CLOSED_STATUSES.indexOf(s.status) === -1; });
+  var sum = function (arr, f) { return lgRound(arr.reduce(function (a, x) { return a + f(x); }, 0)); };
+  return {
+    activeJobs: active.length,
+    receivable10: sum(schedule.receivables.filter(function (r) { return r.date && lgDay(r.date) - t <= 10; }), function (r) { return r.amountUSD; }),
+    payableAll: sum(active, function (s) { return s.totalDueUSD; }),
+    cashNet: sum(active, function (s) { return s.cashNetUSD; }),
+    expectedMargin: sum(active, function (s) { return s.expectedMarginUSD; })
+  };
+}
+function lgSuggestJob(text, jobs) {
+  if (!text) return [];
+  var T = String(text).toUpperCase().replace(/\s+/g, ' '), res = [];
+  jobs.forEach(function (j) {
+    var score = 0;
+    [j.salesPfi, j.jobId].forEach(function (k) {
+      if (!k) return;
+      var K = String(k).toUpperCase();
+      if (T.indexOf(K) > -1) score = Math.max(score, 100);
+      else { var dg = K.replace(/\D/g, ''); if (dg.length >= 4 && T.replace(/\D/g, ' ').split(' ').indexOf(dg) > -1) score = Math.max(score, 80); }
+    });
+    if (score) res.push({ jobId: j.jobId, pfi: j.salesPfi, score: score });
+  });
+  return res.sort(function (a, b) { return b.score - a.score; });
+}
+
+/* ---------- Payment allocation ---------- */
+/** Valid allocations of a movement: [{jobId, amount}] in the movement's currency. */
+function lgAllocs(t) { return (t.allocations || []).filter(function (a) { return a && a.jobId && lgNum(a.amount) > 0; }); }
+/** One virtual movement per job allocation (legacy movements without allocations go wholly to t.jobId). */
+function lgExpandTx(txs) {
+  var out = [];
+  txs.forEach(function (t) {
+    var al = lgAllocs(t);
+    if (al.length) al.forEach(function (a) { out.push(Object.assign({}, t, { jobId: a.jobId, amount: lgNum(a.amount), _parent: t.id, _total: lgNum(t.amount) })); });
+    else if (t.jobId) out.push(t);
+  });
+  return out;
+}
+/** Part of a movement not allocated to any job, in its own currency. */
+function lgUnallocated(t) {
+  var al = lgAllocs(t);
+  if (!al.length) return t.jobId ? 0 : lgNum(t.amount);
+  var used = al.reduce(function (s, a) { return s + lgNum(a.amount); }, 0);
+  return lgRound(Math.max(0, lgNum(t.amount) - used));
+}
+
+/* ---------- Sales report ---------- */
+var SHIPPED_STATUSES = ['At sea', 'Arrived', 'Ready to close', 'Closed'];
+var MODEL_STOP = ['the', 'and', 'with', 'for', 'unit', 'units', 'pcs', 'model', 'year', 'color', 'colour', 'white', 'black', 'silver', 'grey', 'gray', 'red', 'blue', 'new', 'brand', 'x'];
+function lgModelKey(m) {
+  return String(m || '').toLowerCase().replace(/\b(19|20)\d{2}\b/g, ' ').replace(/[^a-z0-9]+/g, ' ').split(' ')
+    .filter(function (w) { return w && MODEL_STOP.indexOf(w) < 0 && !/^\d+x$/.test(w); }).join(' ');
+}
+function lgKeyMatch(a, b) { return a && b && (a === b || a.indexOf(b) > -1 || b.indexOf(a) > -1); }
+/**
+ * filters: {from, to (YYYY-MM-DD on PFI date), realizedOnly}
+ * Gross margin = sale - all commitments (supplier, freight, inspection, BIETC, commission, other).
+ */
+function lgReport(jobs, commitments, summaries, filters) {
+  filters = filters || {};
+  var sumById = {}; summaries.forEach(function (s) { sumById[s.jobId] = s; });
+  var cmByJob = {}; commitments.forEach(function (c) { (cmByJob[c.jobId] = cmByJob[c.jobId] || []).push(c); });
+  var scope = jobs.filter(function (j) {
+    var s = sumById[j.jobId]; if (!s || s.status === 'Cancelled') return false;
+    if (filters.from && (j.pfiDate || '') < filters.from) return false;
+    if (filters.to && (j.pfiDate || '') > filters.to) return false;
+    if (filters.realizedOnly && SHIPPED_STATUSES.indexOf(s.status) < 0) return false;
+    return true;
+  });
+  var rows = [], clients = {}, countries = {}, suppliers = {}, models = {}, months = {};
+  var T = { revenue: 0, revenueWithCost: 0, supplierCost: 0, otherCost: 0, margin: 0, units: 0, jobs: 0, realized: 0, expected: 0, missingCost: 0 };
+  function bucket(map, key, label) { if (!map[key]) map[key] = { key: key, label: label, revenue: 0, revCost: 0, cost: 0, margin: 0, jobs: 0, units: 0, purchases: 0, clients: {} }; return map[key]; }
+  scope.forEach(function (j) {
+    var s = sumById[j.jobId], rev = s.saleUSD, sup = s.commit.Supplier, other = lgRound(s.totalCommitUSD - s.commit.Supplier);
+    var gm = lgRound(rev - s.totalCommitUSD), realized = SHIPPED_STATUSES.indexOf(s.status) > -1, missing = !(sup > 0);
+    var lines = (j.lines || []).filter(function (l) { return l && l.model && lgNum(l.qty) > 0; });
+    var units = lines.length ? lines.reduce(function (a, l) { return a + lgNum(l.qty); }, 0) : lgNum(j.units);
+    rows.push({ jobId: j.jobId, pfi: j.salesPfi, client: j.client, country: j.country, pfiDate: j.pfiDate, etd: j.etd, status: s.status,
+      revenue: rev, supplierCost: sup, otherCost: other, margin: gm, marginPct: rev > 0 ? gm / rev * 100 : 0, units: units, realized: realized, missingCost: missing });
+    var gmE = missing ? 0 : gm, revE = missing ? 0 : rev; // jobs without supplier cost are left out of margin figures
+    T.revenue += rev; T.revenueWithCost += revE; T.supplierCost += sup; T.otherCost += other; T.margin += gmE; T.units += units; T.jobs++;
+    if (realized) T.realized += gmE; else T.expected += gmE;
+    if (missing) T.missingCost++;
+    var c = bucket(clients, String(j.client || '—').trim().toUpperCase(), j.client || '—'); c.revenue += rev; c.revCost += revE; c.cost += s.totalCommitUSD; c.margin += gmE; c.jobs++; c.units += units; c.country = j.country;
+    var k = bucket(countries, String(j.country || '—').toUpperCase(), String(j.country || '—').toUpperCase()); k.revenue += rev; k.revCost += revE; k.margin += gmE; k.jobs++; k.units += units; k.clients[c.key] = 1;
+    var mo = bucket(months, (j.pfiDate || '').slice(0, 7) || '—', (j.pfiDate || '').slice(0, 7) || '—'); mo.revenue += rev; mo.revCost += revE; mo.margin += gmE; mo.jobs++;
+    var supCms = (cmByJob[j.jobId] || []).filter(function (x) { return x.category === 'Supplier'; });
+    supCms.forEach(function (x) {
+      var b = bucket(suppliers, String(x.counterparty || '—').trim().toUpperCase(), x.counterparty || '—');
+      var usd = lgToUSD(x.amount, x.ccy, x.rate);
+      b.purchases += usd; b.revenue += rev * (sup > 0 ? usd / sup : 0); b.revCost += rev * (sup > 0 ? usd / sup : 0); b.margin += gm * (sup > 0 ? usd / sup : 0);
+      if (!b._jobs) b._jobs = {}; b._jobs[j.jobId] = 1;
+      (x.lines || []).forEach(function (l) { b.units += lgNum(l.qty); });
+    });
+    // model breakdown
+    var saleLines = lines.length ? lines.map(function (l) { return { model: l.model, key: lgModelKey(l.model), qty: lgNum(l.qty), rev: lgNum(l.qty) * lgNum(l.unitPrice) }; })
+      : [{ model: '(no model breakdown)', key: '(no model breakdown)', qty: units || 1, rev: rev }];
+    var lineRevTotal = saleLines.reduce(function (a, l) { return a + l.rev; }, 0);
+    var fx = lineRevTotal > 0 ? rev / lineRevTotal : 0; // brings line amounts to USD and to the job total
+    saleLines.forEach(function (l) { l.revUSD = lineRevTotal > 0 ? l.rev * fx : rev / saleLines.length; l.cost = 0; });
+    var supLines = [];
+    supCms.forEach(function (x) { (x.lines || []).forEach(function (l) { if (l && l.model && lgNum(l.qty) > 0) supLines.push({ key: lgModelKey(l.model), qty: lgNum(l.qty), costUSD: lgToUSD(lgNum(l.qty) * lgNum(l.unitCost), x.ccy, x.rate) }); }); });
+    var matched = 0;
+    supLines.forEach(function (sl) {
+      var target = saleLines.filter(function (l) { return lgKeyMatch(l.key, sl.key); })[0];
+      if (target) { target.cost += sl.costUSD; matched += sl.costUSD; }
+    });
+    var rest = Math.max(0, sup - matched), totalQty = saleLines.reduce(function (a, l) { return a + l.qty; }, 0);
+    saleLines.forEach(function (l) {
+      if (rest > 0) l.cost += lineRevTotal > 0 ? rest * (l.revUSD / rev || 0) : rest / saleLines.length;
+      l.cost += totalQty > 0 ? other * l.qty / totalQty : 0;
+      var m = bucket(models, l.key || l.model, l.model);
+      m.units += l.qty; m.revenue += l.revUSD; m.jobs++; if (!missing) { m.revCost += l.revUSD; m.cost += l.cost; m.margin += l.revUSD - l.cost; }
+      m.brand = String(l.model).trim().split(/\s+/)[0];
+    });
+  });
+  var fin = function (map, sortKey) {
+    return Object.keys(map).map(function (k) {
+      var b = map[k];
+      ['revenue', 'cost', 'margin', 'purchases'].forEach(function (f) { b[f] = lgRound(b[f]); });
+      b.revCost = lgRound(b.revCost); b.marginPct = b.revCost > 0 ? b.margin / b.revCost * 100 : 0;
+      b.marginPerUnit = b.units > 0 ? lgRound(b.margin / b.units) : 0;
+      if (b._jobs) { b.jobs = Object.keys(b._jobs).length; delete b._jobs; }
+      if (b.clients) { b.clientCount = Object.keys(b.clients).length; delete b.clients; }
+      return b;
+    }).sort(function (a, b) { return b[sortKey] - a[sortKey]; });
+  };
+  ['revenue', 'revenueWithCost', 'supplierCost', 'otherCost', 'margin', 'realized', 'expected'].forEach(function (f) { T[f] = lgRound(T[f]); });
+  T.marginPct = T.revenueWithCost > 0 ? T.margin / T.revenueWithCost * 100 : 0;
+  var brands = {}, modelList = fin(models, 'margin');
+  modelList.forEach(function (m) { var b = bucket(brands, String(m.brand || '—').toUpperCase(), m.brand || '—'); b.units += m.units; b.revenue += m.revenue; b.revCost += m.revCost; b.margin += m.margin; b.jobs += m.jobs; });
+  return { totals: T, jobs: rows.sort(function (a, b) { return b.margin - a.margin; }), clients: fin(clients, 'revenue'), countries: fin(countries, 'revenue'),
+    suppliers: fin(suppliers, 'purchases'), models: modelList, brands: fin(brands, 'revenue'),
+    months: fin(months, 'revenue').sort(function (a, b) { return a.key < b.key ? -1 : 1; }) };
+}
+
+if (typeof module !== 'undefined') module.exports = { lgSummarizeJob: lgSummarizeJob, lgAlerts: lgAlerts, lgSchedule: lgSchedule, lgKpis: lgKpis, lgSuggestJob: lgSuggestJob, lgParseAmount: lgParseAmount, lgExpandTx: lgExpandTx, lgUnallocated: lgUnallocated, lgReport: lgReport, lgModelKey: lgModelKey };
+</script><script>/**
+ * Swift.gs — lecture déterministe des avis de paiement.
+ * Formats gérés : MT103 (texte, champs :20: :32A: :50: :59: :70: et UETR {121:}),
+ * ISO 20022 pacs.008 (XML) et avis PDF/texte libellés (repli heuristique).
+ * Le résultat est une PROPOSITION : l'utilisateur valide avant enregistrement.
+ */
+
+function swParse(text) {
+  var res = { format: 'unknown', valueDate: '', currency: '', amount: 0, reference: '', uetr: '',
+              ordering: '', beneficiary: '', remittance: '', confidence: 0 };
+  if (!text) return res;
+  var raw = String(text);
+
+  // 1) ISO 20022 pacs.008 (XML)
+  if (/<(\w+:)?IntrBkSttlmAmt/i.test(raw) || /pacs\.008/i.test(raw)) {
+    var amt = raw.match(/<(?:\w+:)?IntrBkSttlmAmt[^>]*Ccy="([A-Z]{3})"[^>]*>\s*([\d.]+)\s*</i) ||
+              raw.match(/<(?:\w+:)?InstdAmt[^>]*Ccy="([A-Z]{3})"[^>]*>\s*([\d.]+)\s*</i);
+    if (amt) { res.currency = amt[1]; res.amount = parseFloat(amt[2]); }
+    res.valueDate = swTag(raw, 'IntrBkSttlmDt');
+    res.uetr = swTag(raw, 'UETR');
+    res.reference = swTag(raw, 'EndToEndId') || swTag(raw, 'InstrId') || swTag(raw, 'MsgId');
+    res.ordering = swBlockName(raw, 'Dbtr');
+    res.beneficiary = swBlockName(raw, 'Cdtr');
+    res.remittance = swTag(raw, 'Ustrd');
+    res.format = 'pacs.008';
+    res.confidence = (res.amount && res.currency && res.valueDate) ? 95 : 60;
+    return res;
+  }
+
+  // 2) MT103 : :32A:YYMMDDCCYmontant (virgule décimale)
+  var m32 = raw.match(/:?32A:\s*(\d{6})\s*([A-Z]{3})\s*([\d]+(?:,\d*)?)/);
+  if (m32) {
+    var d = m32[1];
+    res.valueDate = '20' + d.slice(0, 2) + '-' + d.slice(2, 4) + '-' + d.slice(4, 6);
+    res.currency = m32[2];
+    res.amount = parseFloat(m32[3].replace(',', '.')) || 0;
+    res.reference = swMtField(raw, '20');
+    res.ordering = swMtField(raw, '50[AFK]?');
+    res.beneficiary = swMtField(raw, '59[AF]?');
+    res.remittance = swMtField(raw, '70');
+    var u = raw.match(/\{121:([0-9a-f-]{36})\}/i) || raw.match(/UETR[:\s]*([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+    if (u) res.uetr = u[1];
+    res.format = 'MT103';
+    res.confidence = 95;
+    return res;
+  }
+
+  // 3) Avis PDF / texte libellé (repli)
+  var flat = raw.replace(/\r/g, '');
+  var lbl = flat.match(/(?:Interbank\s+Settled\s+Amount|Settlement\s+Amount|Instructed\s+Amount|Transfer\s+Amount|Amount|Montant)[^\n]{0,40}?([A-Z]{3})\s*([\d.,\s]{1,20}\d)/i)
+         || flat.match(/\b(USD|EUR|AED|CNY|JPY|GBP|KRW|XOF|XAF|INR|CHF)\s?([\d][\d.,\s]{0,18}\d)\b/);
+  if (lbl) { res.currency = lbl[1].toUpperCase(); res.amount = lgParseAmount(lbl[2]); }
+  var dt = flat.match(/(?:Value\s+Date|Settlement\s+Date|Date\s+de\s+valeur|Date\s+valeur)[^\n\d]{0,15}(\d{1,4}[-\/.\s][A-Za-z0-9]{1,9}[-\/.\s]\d{2,4})/i);
+  if (dt) res.valueDate = swNormDate(dt[1]);
+  var u2 = flat.match(/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i);
+  if (u2) res.uetr = u2[1];
+  var ref = flat.match(/(?:Reference|Référence|Ref\.?|TRN)[^\n:]{0,12}[:\s]+([A-Z0-9\/-]{6,})/i);
+  if (ref) res.reference = ref[1];
+  var ben = flat.match(/(?:Beneficiary(?:\s+Name)?|Bénéficiaire)[^\n:]{0,5}[:\s]+([^\n]{3,60})/i);
+  if (ben) res.beneficiary = ben[1].trim();
+  var rem = flat.match(/(?:Remittance\s+Information|Payment\s+Details|Details\s+of\s+Payment|Motif|Purpose)[^\n:]{0,5}[:\s]+([^\n]{3,140})/i);
+  if (rem) res.remittance = rem[1].trim();
+  if (res.amount || res.valueDate) {
+    res.format = 'labelled advice';
+    res.confidence = (res.amount && res.currency && res.valueDate) ? 70 : 40;
+  }
+  return res;
+}
+
+function swTag(xml, tag) {
+  var m = xml.match(new RegExp('<(?:\\w+:)?' + tag + '[^>]*>\\s*([^<]+?)\\s*</(?:\\w+:)?' + tag + '>', 'i'));
+  return m ? m[1] : '';
+}
+function swBlockName(xml, block) {
+  var m = xml.match(new RegExp('<(?:\\w+:)?' + block + '>([\\s\\S]*?)</(?:\\w+:)?' + block + '>', 'i'));
+  return m ? swTag(m[1], 'Nm') : '';
+}
+function swMtField(raw, tag) {
+  var m = raw.match(new RegExp(':' + tag + ':([\\s\\S]*?)(?=\\n:\\d{2}[A-Z]?:|\\n-\\}|-\\}|$)'));
+  if (!m) return '';
+  return m[1].replace(/^\/[^\n]*\n/, '').replace(/\s*\n\s*/g, ' ').trim().slice(0, 200);
+}
+var SW_MONTHS = { JAN: 1, FEB: 2, MAR: 3, APR: 4, MAY: 5, JUN: 6, JUL: 7, AUG: 8, SEP: 9, OCT: 10, NOV: 11, DEC: 12,
+  JANV: 1, FEV: 2, FÉV: 2, MARS: 3, AVR: 4, MAI: 5, JUIN: 6, JUIL: 7, AOU: 8, AOÛ: 8, SEPT: 9, NOVE: 11, DÉC: 12 };
+function swNormDate(s) {
+  s = String(s).trim();
+  var m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})$/);
+  if (m) return m[1] + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[3]).slice(-2);
+  m = s.match(/^(\d{1,2})[-\/.\s]([A-Za-zéû]{3,5})[-\/.\s](\d{2,4})$/);
+  if (m) {
+    var mo = SW_MONTHS[m[2].toUpperCase()] || SW_MONTHS[m[2].toUpperCase().slice(0, 3)];
+    if (!mo) return '';
+    var y = m[3].length === 2 ? '20' + m[3] : m[3];
+    return y + '-' + ('0' + mo).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+  }
+  m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2,4})$/); // JJ/MM/AAAA (usage EAU/Europe)
+  if (m) {
+    var yy = m[3].length === 2 ? '20' + m[3] : m[3];
+    return yy + '-' + ('0' + m[2]).slice(-2) + '-' + ('0' + m[1]).slice(-2);
+  }
+  return '';
+}
+
+if (typeof module !== 'undefined') module.exports = { swParse: swParse, swNormDate: swNormDate };
+</script><script>/* TKX Export Jobs — front end running on Claude-hosted storage (db, assets, user, sample, downloads). */
+var DB = null, USER = null, ASSETS = null, SAMPLE = null, DL = null, ME = null;
+var CAN_WRITE = true, CAN_EDIT = false;
+var S = { jobs: [], commitments: [], transactions: [], documents: [], quotes: [], settings: null };
+var LOADED = {}, CACHE = {};
+var COLLS = ['jobs', 'commitments', 'transactions', 'documents', 'quotes'];
+var DOC_TYPES = ['Supplier PFI', 'Sales invoice', 'Freight invoice', 'BL', 'BIETC', 'Inspection', 'Certificate of origin', 'Packing list', 'Other'];
+var DEFAULT_DOCS = ['Supplier PFI', 'Sales invoice', 'Freight invoice', 'BL', 'BIETC', 'Inspection'];
+var CURRENCIES = ['USD', 'AED', 'EUR', 'CNY', 'JPY', 'KRW', 'GBP', 'INR', 'XOF', 'XAF', 'CHF', 'SAR'];
+var DEFAULT_SETTINGS = {
+  rules: { CLIENT_DAYS_BEFORE_ETD: 10, SUPPLIER_DAYS_BEFORE_ETD: 0, FREIGHT_DAYS_BEFORE_ETD: 0, WARN_DAYS: 5, ETD_NOTICE_DAYS: 7,
+    ETA_NOTICE_DAYS: 5, BL_DAYS_AFTER_ETD: 7, PRESHIP_DOC_DAYS_BEFORE_ETD: 3, DOC_SEND_DAYS: 2, TOLERANCE_USD: 50 },
+  rates: { USD: 1 }, ownNames: 'TKXPORT,TAWREED,VITESSE,365', countryDocs: []
+};
+var RULE_LABELS = {
+  CLIENT_DAYS_BEFORE_ETD: 'Client balance due N days before ETD', SUPPLIER_DAYS_BEFORE_ETD: 'Supplier balance due N days before ETD (unless a due date is set)',
+  FREIGHT_DAYS_BEFORE_ETD: 'Freight invoice due N days before ETD (unless a due date is set)', WARN_DAYS: 'Early warning N days before a deadline',
+  ETD_NOTICE_DAYS: 'Departure notice N days ahead', ETA_NOTICE_DAYS: 'Arrival notice N days ahead', BL_DAYS_AFTER_ETD: 'BL expected by ETD + N days',
+  PRESHIP_DOC_DAYS_BEFORE_ETD: 'BIETC / inspection expected by ETD − N days', DOC_SEND_DAYS: 'Received client document to be sent within N days',
+  TOLERANCE_USD: 'Balance treated as settled below this USD amount'
+};
+
+/* ---------------- helpers ---------------- */
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s === undefined || s === null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function fmt(n, dec) { n = Number(n) || 0; return n.toLocaleString('en-US', { minimumFractionDigits: dec || 0, maximumFractionDigits: dec || 0 }); }
+function fmtS(n) { n = Number(n) || 0; return (n > 0 ? '+' : n < 0 ? '−' : '') + fmt(Math.abs(n)); }
+function fmtD(s) { if (!s) return '—'; var m = String(s).match(/^(\d{4})-(\d{2})-(\d{2})/); if (!m) return esc(s); return m[3] + ' ' + ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][+m[2] - 1] + ' ' + m[1].slice(2); }
+function today() { try { return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Dubai' }).format(new Date()); } catch (e) { return new Date().toISOString().slice(0, 10); } }
+function dayDiff(s) { if (!s) return null; return Math.round((Date.parse(s) - Date.parse(today())) / 86400000); }
+function toast(msg) { var t = $('toast'); t.textContent = msg; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(function () { t.style.display = 'none'; }, 3500); }
+function go(h) { if (location.hash === '#' + h) route(); else location.hash = h; }
+function jobHash(id) { return 'job-' + String(id).replace(/[^A-Za-z0-9-]/g, '-'); }
+function bar(p) { return '<div>' + p + '%<div class="bar"><i style="width:' + Math.min(100, p) + '%"></i></div></div>'; }
+function pill(level, txt) { return '<span class="pill p-' + level + '">' + esc(txt) + '</span>'; }
+function statusPill(s) { var m = { 'Preparing': 'info', 'At sea': 'info', 'Arrived': 'warning', 'Ready to close': 'ok' }; return '<span class="pill p-' + (m[s] || '') + '">' + esc(s) + '</span>'; }
+function rid(prefix) { return prefix + '-' + Math.random().toString(36).slice(2, 10).toUpperCase(); }
+function settings() { var s = S.settings || {}; return { rules: Object.assign({}, DEFAULT_SETTINGS.rules, s.rules || {}), rates: Object.assign({}, DEFAULT_SETTINGS.rates, s.rates || {}), ownNames: s.ownNames || DEFAULT_SETTINGS.ownNames, countryDocs: s.countryDocs || [] }; }
+function fileUrl(id) { if (!id) return ''; if (window.__demoFileUrl) return window.__demoFileUrl(id); return '/_blob/' + encodeURIComponent(id); }
+function byJob(arr, id) { return arr.filter(function (x) { return x.jobId === id; }); }
+function find(arr, id) { return arr.filter(function (x) { return x.id === id; })[0]; }
+
+/* ---------------- storage ---------------- */
+function clean(o) {
+  var out = {};
+  Object.keys(o).forEach(function (k) {
+    if (k.charAt(0) === '_' || k === 'url') return;
+    var v = o[k];
+    if (v === undefined || (typeof v === 'number' && isNaN(v))) return;
+    out[k] = v;
+  });
+  return out;
+}
+function put(coll, obj) {
+  if (!DB) return Promise.reject(new Error('Storage unavailable.'));
+  var o = clean(obj);
+  if (!o.id) o.id = rid(coll.slice(0, 3).toUpperCase());
+  return DB.collection(coll).doc(o.id).set(o).then(function () { return o; }, function (e) {
+    if (e && e.code === 'invalid_argument') CAN_WRITE = false;
+    throw new Error(e && e.code === 'quota_exceeded' ? 'Storage is full: ' + e.message : (e && e.message) || String(e));
+  });
+}
+function remove(coll, id) { return DB.collection(coll).doc(id).delete(); }
+
+/* ---------------- computed view ---------------- */
+var VERSION = 0, COMPUTED = null, COMPUTED_V = -1;
+function computed() {
+  if (COMPUTED_V === VERSION && COMPUTED) return COMPUTED;
+  var cfg = settings().rules, t = today();
+  var by = function (arr) { var m = {}; arr.forEach(function (r) { (m[r.jobId] = m[r.jobId] || []).push(r); }); return m; };
+  var e = by(S.commitments), tx = by(lgExpandTx(S.transactions)), d = by(S.documents);
+  var sums = S.jobs.map(function (j) { return lgSummarizeJob(j, e[j.jobId] || [], tx[j.jobId] || [], d[j.jobId] || [], cfg, t); });
+  var sch = lgSchedule(sums);
+  COMPUTED = { today: t, summaries: sums, schedule: sch, alerts: lgAlerts(sums, d, cfg, t), kpis: lgKpis(sums, sch, t) };
+  COMPUTED_V = VERSION;
+  return COMPUTED;
+}
+
+/* ---------------- routing & rendering ---------------- */
+var renderTimer = null, pendingRender = false;
+function dataChanged() {
+  VERSION++;
+  clearTimeout(renderTimer);
+  renderTimer = setTimeout(function () {
+    var a = document.activeElement;
+    if (a && $('app').contains(a) && /INPUT|SELECT|TEXTAREA/.test(a.tagName)) { pendingRender = true; return; }
+    route(true);
+  }, 120);
+}
+document.addEventListener('focusout', function () { if (pendingRender) { pendingRender = false; setTimeout(function () { route(true); }, 50); } });
+
+function route(keepScroll) {
+  var h = location.hash.replace(/^#/, '') || 'dashboard';
+  var v = h.indexOf('job-') === 0 ? 'job' : h;
+  document.querySelectorAll('nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.v === (v === 'job' ? 'jobs' : v)); });
+  if (!keepScroll) window.scrollTo(0, 0);
+  if (!allLoaded()) { $('app').innerHTML = '<div class="empty">Loading data…</div>'; return; }
+  if (v === 'job') {
+    var id = h.slice(4), j = S.jobs.filter(function (x) { return jobHash(x.jobId) === 'job-' + id; })[0];
+    return j ? viewJob(j.jobId) : viewMissing();
+  }
+  ({ dashboard: viewDash, jobs: viewJobs, payments: viewPayments, report: viewReport, schedule: viewSchedule, alerts: viewAlerts, quotes: viewQuotes, settings: viewSettings }[v] || viewDash)();
+}
+window.addEventListener('hashchange', function () { closeModal(); route(); });
+function allLoaded() { return COLLS.every(function (c) { return LOADED[c]; }) && LOADED.settings; }
+function app(html) { $('app').innerHTML = html; }
+function viewMissing() { app('<div class="card empty">This job no longer exists. <a href="#jobs">Back to jobs</a></div>'); }
+
+/* ---------------- dashboard ---------------- */
+function firstAlertByJob(alerts) { var m = {}; alerts.forEach(function (a) { if (!m[a.jobId]) m[a.jobId] = a; }); return m; }
+function jobsTable(list, alerts) {
+  if (!list.length) return '<div class="empty">No jobs yet. Create the first one with “New job”.</div>';
+  var fa = firstAlertByJob(alerts || []);
+  return '<table class="t resp"><thead><tr><th>Job</th><th>Sales PFI</th><th>Client</th><th>ETD</th><th>Client paid</th><th>Supplier paid</th><th>Docs</th><th class="num">Net cash</th><th>Next action</th></tr></thead><tbody>' +
+    list.map(function (s) {
+      var dots = s.docs.map(function (d) { return '<span title="' + esc(d.type + ': ' + d.status) + '" class="' + (d.status === 'Received' ? 'on' : d.status === 'N/A' ? 'na' : '') + '"></span>'; }).join('');
+      var a = fa[s.jobId];
+      return '<tr class="click" onclick="go(\'' + jobHash(s.jobId) + '\')"><td data-l="Job"><b>' + esc(s.jobId) + '</b></td><td data-l="Sales PFI">' + esc(s.pfi) + '</td>' +
+        '<td data-l="Client">' + esc(s.client) + (s.country ? ' · ' + esc(s.country) : '') + '</td><td data-l="ETD">' + fmtD(s.etd) + '</td>' +
+        '<td data-l="Client paid">' + bar(s.pctReceived) + '</td><td data-l="Supplier paid">' + bar(s.pctSupplierPaid) + '</td>' +
+        '<td data-l="Docs"><span class="dots">' + dots + '</span></td><td data-l="Net cash" class="num ' + (s.cashNetUSD < 0 ? 'red' : '') + '">' + fmtS(s.cashNetUSD) + '</td>' +
+        '<td data-l="Next action">' + (a ? pill(a.level, a.type) : statusPill(s.status)) + '</td></tr>';
+    }).join('') + '</tbody></table>';
+}
+function alertHtml(a) {
+  var when = a.date ? (a.type === 'Departure' || a.type === 'Arrival' ? ' · on ' : ' · by ') + fmtD(a.date) : '';
+  return '<div class="alert ' + a.level + '" onclick="go(\'' + jobHash(a.jobId) + '\')"><div style="flex:1"><b>' + esc(a.message) + '</b><br>' + esc(a.jobId) +
+    (a.pfi ? ' · ' + esc(a.pfi) : '') + (a.client ? ' · ' + esc(a.client) : '') + (a.amountUSD ? ' · ' + fmt(a.amountUSD) + ' USD' : '') + when + '</div></div>';
+}
+function viewDash() {
+  var d = computed(), k = d.kpis;
+  var active = d.summaries.filter(function (s) { return CLOSED_STATUSES.indexOf(s.status) < 0; }).sort(function (a, b) { return (a.etd || '9999') < (b.etd || '9999') ? -1 : 1; });
+  var soon = d.schedule.receivables.map(function (r) { return Object.assign({ dir: 'in' }, r); }).concat(d.schedule.payables.map(function (r) { return Object.assign({ dir: 'out' }, r); }))
+    .filter(function (r) { var x = dayDiff(r.date); return x !== null && x <= 14; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  app('<div class="row"><div><h1>Active jobs</h1><p class="sub">' + fmtD(d.today) + ' · reporting currency USD</p></div><span class="sp"></span>' +
+    (CAN_WRITE ? '<button onclick="importAdvice()">Import payment advice</button><button class="pri" onclick="editJob()">New job</button>' : '') + '</div>' +
+    '<div class="grid g4" style="margin-bottom:14px"><div class="kpi"><p>Active jobs</p><b>' + k.activeJobs + '</b></div>' +
+    '<div class="kpi"><p>To collect within 10 days</p><b class="' + (k.receivable10 ? 'red' : '') + '">' + fmt(k.receivable10) + '</b></div>' +
+    '<div class="kpi"><p>Left to pay (supplier, freight…)</p><b>' + fmt(k.payableAll) + '</b></div>' +
+    '<div class="kpi"><p>Net cash across jobs</p><b class="' + (k.cashNet < 0 ? 'red' : 'grn') + '">' + fmtS(k.cashNet) + '</b></div></div>' +
+    unallocatedNotice() + '<div class="card">' + jobsTable(active, d.alerts) + '<p class="hint" style="margin:8px 0 0">Doc dots follow each job\'s checklist order (hover for detail).</p></div>' +
+    '<div class="grid g2"><div class="card"><div class="row"><h2>Alerts</h2><span class="sp"></span><a href="#alerts">See all</a></div>' +
+    (d.alerts.length ? d.alerts.slice(0, 6).map(alertHtml).join('') : '<div class="empty">No alerts.</div>') + '</div>' +
+    '<div class="card"><div class="row"><h2>Next 14 days</h2><span class="sp"></span><a href="#schedule">Schedule</a></div>' +
+    (soon.length ? '<table class="t">' + soon.map(function (r) {
+      return '<tr class="click" onclick="go(\'' + jobHash(r.jobId) + '\')"><td class="' + (dayDiff(r.date) < 0 ? 'red' : '') + '">' + fmtD(r.date) + '</td><td>' +
+        (r.dir === 'in' ? 'Collect ' : 'Pay ') + esc(r.label.toLowerCase()) + ' · ' + esc(r.jobId) + '</td><td class="num ' + (r.dir === 'in' ? 'grn' : '') + '">' + fmt(r.amountUSD) + '</td></tr>';
+    }).join('') + '</table>' : '<div class="empty">Nothing due in the next 14 days.</div>') + '</div></div>');
+}
+
+/* ---------------- jobs list ---------------- */
+var JOB_FILTER = { q: '', f: 'act' };
+function viewJobs() {
+  app('<div class="row"><h1>Jobs</h1><span class="sp"></span>' + (CAN_WRITE ? '<button class="pri" onclick="editJob()">New job</button>' : '') + '</div>' +
+    '<div class="row" style="margin:10px 0 12px"><input id="q" placeholder="Search job, PFI, client, country" style="max-width:340px" value="' + esc(JOB_FILTER.q) + '" oninput="JOB_FILTER.q=this.value;filterJobs()">' +
+    '<select id="fs" style="max-width:180px" onchange="JOB_FILTER.f=this.value;filterJobs()"><option value="act">Active</option><option value="all">All</option><option value="closed">Closed / cancelled</option></select></div>' +
+    '<div class="card" id="jobsList"></div>');
+  $('fs').value = JOB_FILTER.f;
+  filterJobs();
+}
+function filterJobs() {
+  var d = computed(), q = JOB_FILTER.q.toLowerCase(), f = JOB_FILTER.f;
+  var list = d.summaries.filter(function (s) {
+    var closed = CLOSED_STATUSES.indexOf(s.status) > -1;
+    if (f === 'act' && closed) return false; if (f === 'closed' && !closed) return false;
+    return !q || [s.jobId, s.pfi, s.client, s.country].join(' ').toLowerCase().indexOf(q) > -1;
+  }).sort(function (a, b) { return a.jobId < b.jobId ? 1 : -1; });
+  $('jobsList').innerHTML = jobsTable(list, d.alerts);
+}
+
+/* ---------------- job page ---------------- */
+var CUR_JOB = null;
+function viewJob(id) {
+  CUR_JOB = id;
+  var j = S.jobs.filter(function (x) { return x.jobId === id; })[0];
+  var cm = byJob(S.commitments, id), tx = byJob(lgExpandTx(S.transactions), id), docs = byJob(S.documents, id), qs = byJob(S.quotes, id);
+  docs.sort(function (a, b) { return (a.order || 99) - (b.order || 99); });
+  var cfg = settings().rules, t = today();
+  var s = lgSummarizeJob(j, cm, tx, docs, cfg, t), m = {}; m[id] = docs;
+  var alerts = lgAlerts([s], m, cfg, t);
+  var firstIn = tx.filter(function (x) { return x.dir === 'IN'; }).map(function (x) { return x.date; }).sort()[0];
+  var firstSup = tx.filter(function (x) { return x.dir === 'OUT' && x.category === 'Supplier'; }).map(function (x) { return x.date; }).sort()[0];
+  function st(label, date, done) {
+    var dd = dayDiff(date), cls = done ? 'done' : (dd !== null && dd < 0 ? 'late' : (dd !== null && dd <= 7 ? 'next' : ''));
+    return '<div class="st ' + cls + '"><i></i>' + label + '<br>' + fmtD(date) + '</div>';
+  }
+  var dEtd = dayDiff(s.etd), dEta = dayDiff(s.eta);
+  var tl = '<div class="timeline">' + st('Sales PFI', j.pfiDate, !!j.salesPfi) + st('Client advance', firstIn, !!firstIn) + st('Supplier deposit', firstSup, !!firstSup) +
+    st('Client balance', s.deadlines.client, s.receivableUSD === 0 && s.saleUSD > 0) + st('Supplier balance', s.deadlines.Supplier, s.due.Supplier === 0 && s.commit.Supplier > 0) +
+    st('Departure', s.etd, dEtd !== null && dEtd <= 0) + st('Arrival', s.eta, dEta !== null && dEta <= 0) + '</div>';
+  var W = CAN_WRITE;
+  var cmRows = cm.map(function (e) {
+    return '<tr><td data-l="Category">' + esc(e.category) + '</td><td data-l="Counterparty">' + esc(e.counterparty) + '</td><td data-l="Ref.">' + esc(e.reference) + '</td>' +
+      '<td data-l="Amount" class="num">' + fmt(e.amount, 2) + ' ' + esc(e.ccy) + '</td><td data-l="Due">' + fmtD(e.dueDate) + '</td><td data-l="">' +
+      (e.fileId ? '<a target="_blank" href="' + fileUrl(e.fileId) + '">File</a> ' : '') + (W ? '<button class="link" onclick="editCommit(\'' + e.id + '\')">Edit</button>' : '') + '</td></tr>';
+  }).join('');
+  var txRows = tx.slice().sort(function (a, b) { return a.date < b.date ? -1 : 1; }).map(function (x) {
+    var usd = lgToUSD(x.amount, x.ccy, x.rate), pid = x._parent || x.id;
+    return '<tr><td data-l="Date">' + fmtD(x.date) + '</td><td data-l="Direction">' + (x.dir === 'IN' ? '<span class="grn">Receipt</span>' : 'Payment') + '</td>' +
+      '<td data-l="Category">' + esc(x.category) + (x.nature ? ' · ' + esc(x.nature) : '') + '</td><td data-l="Method">' + esc(x.mode) + (x.mode === 'Cash' && !x.fileId ? ' <span class="pill p-warning">no receipt</span>' : '') + '</td>' +
+      '<td data-l="Amount" class="num">' + fmt(x.amount, 2) + ' ' + esc(x.ccy) + (x._total && x._total !== x.amount ? '<br><span class="mut">part of ' + fmt(x._total, 2) + '</span>' : '') + (x.ccy !== 'USD' && x.rate ? '<br><span class="mut">@ ' + esc(x.rate) + '</span>' : '') + '</td>' +
+      '<td data-l="USD" class="num">' + fmt(usd) + '</td><td data-l="">' + (x.fileId ? '<a target="_blank" href="' + fileUrl(x.fileId) + '">Proof</a> ' : '') +
+      (W ? '<button class="link" onclick="editTx(\'' + pid + '\')">Edit</button>' : '') + '</td></tr>';
+  }).join('');
+  var docRows = docs.map(function (x) {
+    var client = CLIENT_FACING_DOCS.indexOf(x.type) > -1;
+    return '<tr><td data-l="Document"><b>' + esc(x.type) + '</b>' + (x.notes ? '<br><span class="mut">' + esc(x.notes) + '</span>' : '') + '</td>' +
+      '<td data-l="Status">' + (W ? '<select style="width:auto" onchange="quickDoc(\'' + x.id + '\',{status:this.value})">' + ['Expected', 'Received', 'N/A'].map(function (o) {
+        return '<option' + (o === x.status ? ' selected' : '') + '>' + o + '</option>'; }).join('') + '</select>' : esc(x.status)) + '</td>' +
+      '<td data-l="Received">' + fmtD(x.receivedOn) + '</td><td data-l="Sent to client">' + (client ? '<label><input type="checkbox" style="width:auto" ' + (x.sentToClient ? 'checked ' : '') +
+        (W ? '' : 'disabled ') + 'onchange="quickDoc(\'' + x.id + '\',{sentToClient:this.checked})"> ' + (x.sentOn ? fmtD(x.sentOn) : '') + '</label>' : '<span class="mut">internal</span>') + '</td>' +
+      '<td data-l="">' + (x.fileId ? '<a target="_blank" href="' + fileUrl(x.fileId) + '">Open</a> ' : '') + (W ? '<button class="link" onclick="attachDoc(\'' + x.id + '\')">Attach</button> <button class="link" onclick="editDoc(\'' + x.id + '\')">Edit</button>' : '') + '</td></tr>';
+  }).join('');
+  app('<div class="row"><div><a href="#jobs" class="hint">← Jobs</a><h1>' + esc(j.jobId) + ' · ' + esc(j.salesPfi) + ' ' + statusPill(s.status) + '</h1>' +
+    '<p class="sub">' + esc(j.client) + (j.country ? ' · ' + esc(j.country) : '') + (j.destPort ? ' · ' + esc(j.destPort) : '') + (j.units ? ' · ' + esc(j.units) + ' vehicle(s)' : '') +
+    ' · sale ' + esc(j.incoterm || '') + ' ' + fmt(j.saleAmount) + ' ' + esc(j.saleCcy) + (j.supplier ? ' · supplier ' + esc(j.supplier) : '') + (j.vessel ? ' · vessel ' + esc(j.vessel) : '') + '</p></div><span class="sp"></span>' +
+    (j.fileId ? '<a class="btn" target="_blank" href="' + fileUrl(j.fileId) + '">Sales PFI</a>' : '') + (W ? '<button onclick="editJob(\'' + j.jobId + '\')">Edit job</button>' : '') + '</div>' +
+    '<div class="card">' + tl + '</div>' + (alerts.length ? '<div class="card"><h2>Job alerts</h2>' + alerts.map(alertHtml).join('') + '</div>' : '') +
+    '<div class="grid g4" style="margin-bottom:14px"><div class="kpi"><p>Received from client</p><b>' + fmt(s.receivedUSD) + '</b><span class="hint">of ' + fmt(s.saleUSD) + ' USD</span></div>' +
+    '<div class="kpi"><p>Left to collect</p><b class="' + (s.receivableUSD && dayDiff(s.deadlines.client) < 0 ? 'red' : '') + '">' + fmt(s.receivableUSD) + '</b><span class="hint">due ' + fmtD(s.deadlines.client) + '</span></div>' +
+    '<div class="kpi"><p>Left to pay</p><b>' + fmt(s.totalDueUSD) + '</b><span class="hint">supplier ' + fmt(s.due.Supplier) + ' · freight ' + fmt(s.due.Freight) + '</span></div>' +
+    '<div class="kpi"><p>Net cash / expected margin</p><b class="' + (s.cashNetUSD < 0 ? 'red' : 'grn') + '">' + fmtS(s.cashNetUSD) + '</b><span class="hint">expected margin ' + fmtS(s.expectedMarginUSD) + '</span></div></div>' +
+    '<div class="card"><div class="row"><h2>Commitments (supplier PFIs, freight invoices, fees)</h2><span class="sp"></span>' + (W && S.quotes.some(function (q) { return !q.jobId; }) ? '<button class="sm" onclick="suggestQuotes(CUR_JOB)">Link a supplier quote</button>' : '') + (W ? '<button class="sm" onclick="editCommit()">Add</button>' : '') + '</div>' +
+    (cmRows ? '<table class="t resp"><thead><tr><th>Category</th><th>Counterparty</th><th>Ref.</th><th class="num">Amount</th><th>Due</th><th></th></tr></thead><tbody>' + cmRows + '</tbody></table>' : '<div class="empty">No commitments yet: add the supplier PFI.</div>') + '</div>' +
+    '<div class="card"><div class="row"><h2>Receipts and payments</h2><span class="sp"></span>' + (W ? '<button class="sm" onclick="importAdvice(CUR_JOB)">Import payment advice</button><button class="sm" onclick="editTx(null,\'IN\')">Receipt</button><button class="sm" onclick="editTx(null,\'OUT\')">Payment</button>' : '') + '</div>' +
+    (txRows ? '<table class="t resp"><thead><tr><th>Date</th><th>Direction</th><th>Category</th><th>Method</th><th class="num">Amount</th><th class="num">USD</th><th></th></tr></thead><tbody>' + txRows + '</tbody></table>' : '<div class="empty">No movements yet.</div>') + '</div>' +
+    '<div class="card"><div class="row"><h2>Documents</h2><span class="sp"></span><span class="hint">' + s.docsReceived + '/' + s.docsRequired + ' received · ' + s.docsToSend + ' to send</span>' + (W ? '<button class="sm" onclick="editDoc()">Add</button>' : '') + '</div>' +
+    '<table class="t resp"><thead><tr><th>Document</th><th>Status</th><th>Received</th><th>Sent to client</th><th></th></tr></thead><tbody>' + docRows + '</tbody></table></div>' +
+    (qs.length ? '<div class="card"><h2>Linked quotes</h2><table class="t">' + qs.map(function (c) { return '<tr><td>' + esc(c.supplier) + ' · ' + esc(c.reference) + '</td><td class="num">' + fmt(c.amount, 2) + ' ' + esc(c.ccy) + '</td><td>' + (c.fileId ? '<a target="_blank" href="' + fileUrl(c.fileId) + '">File</a>' : '') + '</td></tr>'; }).join('') + '</table></div>' : '') +
+    (j.notes ? '<div class="card"><h2>Notes</h2><div style="white-space:pre-wrap">' + esc(j.notes) + '</div></div>' : ''));
+}
+
+/* ---------------- forms ---------------- */
+var F = {
+  job: function () { return [
+    { k: '_file', l: 'Sales PFI file (Flexina / Tally) — Claude reads it and fills the form', t: 'file', full: 1, ai: 'job' },
+    { k: 'salesPfi', l: 'Sales PFI no. (Flexina / Tally)', req: 1 }, { k: 'pfiDate', l: 'PFI date', t: 'date' },
+    { k: 'client', l: 'Client', req: 1 }, { k: 'country', l: 'Destination country (code, e.g. CI)' }, { k: 'destPort', l: 'Destination port' },
+    { k: 'incoterm', l: 'Incoterm', t: 'select', o: ['', 'FOB', 'CFR', 'CIF', 'CPT', 'CIP', 'DAP', 'EXW'] }, { k: 'units', l: 'Number of vehicles', t: 'number' },
+    { k: 'supplier', l: 'Main supplier' }, { k: 'saleCcy', l: 'Sale currency', t: 'select', o: CURRENCIES, fx: 'saleRate' }, { k: 'saleAmount', l: 'Sale amount', t: 'number', req: 1 },
+    { k: 'saleRate', l: 'FX rate (units per 1 USD)', t: 'number' }, { k: 'status', l: 'Status', t: 'select', o: ['Open', 'Closed', 'Cancelled'] },
+    { k: 'etd', l: 'ETD (planned departure)', t: 'date' }, { k: 'eta', l: 'ETA (planned arrival)', t: 'date' }, { k: 'vessel', l: 'Vessel' }, { k: 'booking', l: 'Booking / BL no.' },
+    { k: 'description', l: 'Description (models, VINs…)', t: 'textarea', full: 1 }, { k: 'notes', l: 'Notes', t: 'textarea', full: 1 }]; },
+  commit: function () { return [
+    { k: '_file', l: 'Supplier PFI / invoice file — Claude reads it and fills the form', t: 'file', full: 1, ai: 'commit' },
+    { k: 'category', l: 'Category', t: 'select', o: COMMIT_CATEGORIES, req: 1 }, { k: 'counterparty', l: 'Supplier / carrier', req: 1 }, { k: 'reference', l: 'PFI / invoice ref.' },
+    { k: 'date', l: 'Document date', t: 'date' }, { k: 'ccy', l: 'Currency', t: 'select', o: CURRENCIES, fx: 'rate' }, { k: 'amount', l: 'Amount', t: 'number', req: 1 },
+    { k: 'rate', l: 'FX rate (units per 1 USD)', t: 'number' }, { k: 'dueDate', l: 'Payment due date (if known)', t: 'date' },
+    { k: 'notes', l: 'Notes', t: 'textarea', full: 1 }]; },
+  tx: function () { return [
+    { k: 'dir', l: 'Direction', t: 'select', o: [['IN', 'Receipt (from client)'], ['OUT', 'Payment (outgoing)']], req: 1 },
+    { k: 'category', l: 'Category', t: 'select', o: ['Client'].concat(COMMIT_CATEGORIES), req: 1 },
+    { k: 'nature', l: 'Type', t: 'select', o: ['Advance', 'Deposit', 'Balance', 'Payment', 'Refund'] }, { k: 'mode', l: 'Method', t: 'select', o: ['Bank', 'Cash', 'Cheque', 'Offset', 'Other'] },
+    { k: 'counterparty', l: 'Counterparty' }, { k: 'date', l: 'Value date', t: 'date', req: 1 }, { k: 'ccy', l: 'Currency', t: 'select', o: CURRENCIES, fx: 'rate' },
+    { k: 'amount', l: 'Amount', t: 'number', req: 1 }, { k: 'rate', l: 'Applied FX rate (units per 1 USD)', t: 'number' }, { k: 'reference', l: 'Bank reference' },
+    { k: 'uetr', l: 'UETR', full: 1 }, { k: '_file', l: 'Proof (payment advice, cash receipt)', t: 'file', full: 1 }, { k: 'notes', l: 'Notes / payment details', t: 'textarea', full: 1 }]; },
+  doc: function () { return [
+    { k: 'type', l: 'Type', t: 'select', o: DOC_TYPES, req: 1 }, { k: 'status', l: 'Status', t: 'select', o: ['Expected', 'Received', 'N/A'] },
+    { k: 'receivedOn', l: 'Received on', t: 'date' }, { k: 'sentToClient', l: 'Sent to client', t: 'check' },
+    { k: '_file', l: 'File', t: 'file', full: 1 }, { k: 'notes', l: 'Notes', t: 'textarea', full: 1 }]; },
+  quote: function () { return [
+    { k: '_file', l: 'Supplier quote / PFI file — Claude reads it and fills the form', t: 'file', full: 1, ai: 'quote' },
+    { k: 'date', l: 'Date', t: 'date' }, { k: 'supplier', l: 'Supplier', req: 1 }, { k: 'reference', l: 'Quote / supplier PFI ref.' },
+    { k: 'ccy', l: 'Currency', t: 'select', o: CURRENCIES, fx: 'rate' }, { k: 'amount', l: 'Amount', t: 'number', req: 1 }, { k: 'rate', l: 'FX rate (units per 1 USD)', t: 'number' },
+    { k: 'units', l: 'Number of vehicles', t: 'number' },
+    { k: 'jobId', l: 'Job (leave empty if the sales PFI is not issued yet)', t: 'select', o: [['', 'Not linked yet']].concat(S.jobs.filter(function (j) { return CLOSED_STATUSES.indexOf(j.status) < 0; }).map(function (j) { return [j.jobId, j.jobId + ' · ' + j.salesPfi + ' · ' + j.client]; })) },
+    { k: 'description', l: 'Description (models, quantities)', t: 'textarea', full: 1 }, { k: 'notes', l: 'Notes', t: 'textarea', full: 1 }]; }
+};
+function openModal(html) { $('modalBox').innerHTML = html; $('modal').classList.add('on'); }
+function closeModal() { $('modal').classList.remove('on'); }
+function formHtml(fields, data) {
+  return '<div class="fgrid">' + fields.map(function (f) {
+    var v = data[f.k] === undefined || data[f.k] === null ? '' : data[f.k], id = 'f_' + f.k, inp;
+    if (f.t === 'select') inp = '<select id="' + id + '"' + (f.fx ? ' onchange="fxFill(\'' + f.fx + '\',this.value)"' : '') + '>' + f.o.map(function (o) {
+      var val = Array.isArray(o) ? o[0] : o, lab = Array.isArray(o) ? o[1] : o;
+      return '<option value="' + esc(val) + '"' + (String(val) === String(v) ? ' selected' : '') + '>' + esc(lab) + '</option>'; }).join('') + '</select>';
+    else if (f.t === 'textarea') inp = '<textarea id="' + id + '">' + esc(v) + '</textarea>';
+    else if (f.t === 'check') inp = '<input type="checkbox" id="' + id + '" style="width:auto;display:block;margin-top:6px"' + (v === true ? ' checked' : '') + '>';
+    else if (f.t === 'file') inp = (ASSETS ? '<input type="file" id="' + id + '" accept=".pdf,.jpg,.jpeg,.png,.txt,.xml">' : '<span class="hint">File storage is not available for your access level.</span>') +
+      (data.fileId ? '<span class="hint">Current file: <a target="_blank" href="' + fileUrl(data.fileId) + '">open</a></span>' : '') +
+      (f.ai && SAMPLE ? '<button type="button" class="sm" style="margin-top:6px" onclick="aiFillForm(\'' + f.ai + '\')">Read again with Claude</button><span id="aiStatus" class="hint" style="margin-left:8px">Choosing a file fills the form automatically.</span>' : '');
+    else inp = '<input id="' + id + '" type="' + (f.t || 'text') + '"' + (f.t === 'number' ? ' step="any" inputmode="decimal"' : '') + ' value="' + esc(v) + '">';
+    return '<label class="f' + (f.full ? ' full' : '') + '">' + esc(f.l) + (f.req ? ' *' : '') + inp + '</label>';
+  }).join('') + '</div><div id="usdPrev" class="hint"></div><div id="ferr" class="err"></div>';
+}
+function fxFill(target, ccy) {
+  var el = $('f_' + target); if (!el) return;
+  var r = settings().rates[ccy];
+  el.value = ccy === 'USD' ? 1 : (r ? r : '');
+  usdPreview();
+}
+function usdPreview() {
+  [['amount', 'ccy', 'rate'], ['saleAmount', 'saleCcy', 'saleRate']].forEach(function (p) {
+    var m = $('f_' + p[0]), c = $('f_' + p[1]), r = $('f_' + p[2]);
+    if (!m || !c || !r || !$('usdPrev')) return;
+    var a = parseFloat(m.value), rt = parseFloat(r.value);
+    $('usdPrev').textContent = (c.value === 'USD' || !c.value) ? '' : (a && rt ? '≈ ' + fmt(a / rt, 2) + ' USD — use the actual bank rate on receipts and payments' : 'Enter the FX rate to get the USD equivalent.');
+  });
+}
+function readForm(fields) {
+  var o = {}, missing = [];
+  fields.forEach(function (f) {
+    var el = $('f_' + f.k); if (!el || f.t === 'file') return;
+    var v = f.t === 'check' ? el.checked : el.value;
+    if (f.t === 'number' && v !== '') v = parseFloat(String(v).replace(',', '.'));
+    if (f.req && (v === '' || v === null || (typeof v === 'number' && isNaN(v)))) missing.push(f.l);
+    o[f.k] = v;
+  });
+  return { obj: o, missing: missing };
+}
+function uploadFile(file) {
+  if (!ASSETS) return Promise.reject(new Error('File storage is not available for your access level.'));
+  if (file.size > 20 * 1024 * 1024) return Promise.reject(new Error('File too large (20 MB max).'));
+  return ASSETS.upload(file).then(function (a) { return { fileId: a.id, name: file.name }; });
+}
+function chosenFile() { var el = $('f__file'); return el && el.files && el.files[0] ? el.files[0] : null; }
+
+function form(title, fields, data, save, opts) {
+  opts = opts || {};
+  openModal('<div class="row"><h2 style="margin:0">' + esc(title) + '</h2><span class="sp"></span><button class="link" onclick="closeModal()">Close</button></div>' + (opts.top || '') +
+    '<div style="margin-top:12px">' + formHtml(fields, data) + '</div>' + (opts.extra || '') + '<div class="row" style="margin-top:8px">' + (opts.del ? '<button onclick="' + opts.del + '">Delete</button>' : '') +
+    '<span class="sp"></span><button onclick="closeModal()">Cancel</button><button class="pri" id="fsave">Save</button></div>');
+  document.querySelectorAll('#modalBox input,#modalBox select').forEach(function (el) { el.addEventListener('input', usdPreview); });
+  usdPreview();
+  if (opts.afterRender) opts.afterRender();
+  var aiField = fields.filter(function (f) { return f.ai; })[0];
+  if (aiField && SAMPLE && $('f__file')) $('f__file').addEventListener('change', function () { if (chosenFile()) aiFillForm(aiField.ai); });
+  $('fsave').onclick = function () {
+    var r = readForm(fields);
+    if (r.missing.length) { $('ferr').textContent = 'Required fields missing: ' + r.missing.join(', '); return; }
+    var o = Object.assign({}, data, r.obj);
+    if (opts.onRead) { var er = opts.onRead(o); if (er) { $('ferr').textContent = er; return; } }
+    if (o.ccy && o.ccy !== 'USD' && !(o.rate > 0)) { $('ferr').textContent = 'Enter the FX rate (units of ' + o.ccy + ' per 1 USD).'; return; }
+    if (o.saleCcy && o.saleCcy !== 'USD' && !(o.saleRate > 0)) { $('ferr').textContent = 'Enter the FX rate of the sale currency.'; return; }
+    $('fsave').disabled = true; $('fsave').textContent = 'Saving…';
+    var f = chosenFile();
+    (f ? uploadFile(f) : Promise.resolve(null)).then(function (u) { if (u) o.fileId = u.fileId; return save(o); })
+      .then(function () { closeModal(); toast('Saved'); })
+      .catch(function (e) { $('fsave').disabled = false; $('fsave').textContent = 'Save'; $('ferr').textContent = e && e.message || String(e); });
+  };
+}
+function confirmBox(msg, onYes) {
+  openModal('<h2>' + esc(msg) + '</h2><p class="hint">This cannot be undone. Attached files stay in storage.</p><div class="row"><span class="sp"></span><button onclick="closeModal()">Cancel</button><button class="pri" id="cyes">Delete</button></div>');
+  $('cyes').onclick = function () { onYes().then(function () { closeModal(); toast('Deleted'); }, function (e) { toast('Error: ' + (e.message || e)); }); };
+}
+
+/* job */
+function nextJobId() {
+  var y = today().slice(0, 4), max = 0;
+  S.jobs.forEach(function (j) { var m = String(j.jobId).match(new RegExp('^JOB-' + y + '-(\\d+)$')); if (m) max = Math.max(max, +m[1]); });
+  return 'JOB-' + y + '-' + ('00' + (max + 1)).slice(-3);
+}
+function editJob(id) {
+  var j = id ? S.jobs.filter(function (x) { return x.jobId === id; })[0] : null;
+  var jd = j ? Object.assign({}, j) : { saleCcy: 'USD', saleRate: 1, status: 'Open', pfiDate: today() };
+  form(j ? 'Edit job ' + j.jobId : 'New job', F.job(), jd, function (o) {
+    var isNew = !o.jobId;
+    if (isNew) { o.jobId = nextJobId(); o.id = o.jobId; o.createdOn = today(); o.createdBy = ME ? ME.id : ''; }
+    return put('jobs', o).then(function (saved) {
+      if (!isNew) return saved;
+      var rule = settings().countryDocs.filter(function (c) { return String(c.country).toUpperCase() === String(saved.country || '').toUpperCase(); })[0];
+      var chain = Promise.resolve();
+      DEFAULT_DOCS.forEach(function (t, i) {
+        var st = 'Expected';
+        if (rule && t === 'BIETC' && rule.bietc === 'No') st = 'N/A';
+        if (rule && t === 'Inspection' && rule.inspection === 'No') st = 'N/A';
+        chain = chain.then(function () { return put('documents', { jobId: saved.jobId, type: t, status: st, sentToClient: false, order: i + 1, notes: t === 'Inspection' && rule && rule.body ? rule.body : '' }); });
+      });
+      return chain.then(function () { go(jobHash(saved.jobId)); setTimeout(function () { suggestQuotes(saved.jobId, true); }, 300); return saved; });
+    });
+  }, linesOpts(jd.lines, 'unitPrice', 'Unit sale price', 'saleAmount', { del: j && CAN_EDIT ? 'delJob(\'' + j.jobId + '\')' : '' }));
+}
+function delJob(id) {
+  confirmBox('Delete job ' + id + ' and all its lines?', function () {
+    var chain = Promise.resolve();
+    ['commitments', 'documents'].forEach(function (c) { byJob(S[c], id).forEach(function (r) { chain = chain.then(function () { return remove(c, r.id); }); }); });
+    S.transactions.forEach(function (t) {
+      var al = lgAllocs(t), mine = al.filter(function (a) { return a.jobId === id; });
+      if (!al.length && t.jobId === id) chain = chain.then(function () { return remove('transactions', t.id); });
+      else if (mine.length) {
+        var restA = al.filter(function (a) { return a.jobId !== id; });
+        chain = chain.then(function () { return restA.length || t.counterparty ? put('transactions', Object.assign({}, t, { allocations: restA, jobId: restA.length ? restA[0].jobId : '' })) : remove('transactions', t.id); });
+      }
+    });
+    byJob(S.quotes, id).forEach(function (q) { chain = chain.then(function () { return put('quotes', Object.assign({}, q, { jobId: '', status: 'Open' })); }); });
+    return chain.then(function () { return remove('jobs', id); }).then(function () { go('jobs'); });
+  });
+}
+function editCommit(id) {
+  var e = id ? find(S.commitments, id) : { jobId: CUR_JOB, category: 'Supplier', ccy: 'USD', rate: 1, counterparty: (S.jobs.filter(function (x) { return x.jobId === CUR_JOB; })[0] || {}).supplier || '' };
+  form(id ? 'Edit commitment' : 'New commitment', F.commit(), Object.assign({}, e), function (o) {
+    return put('commitments', o).then(function (s) {
+      var dt = s.category === 'Freight' ? 'Freight invoice' : s.category === 'Supplier' ? 'Supplier PFI' : null;
+      if (dt) return markDoc(s.jobId, dt, s.fileId);
+    });
+  }, linesOpts(e.lines, 'unitCost', 'Unit cost', 'amount', { del: id && CAN_EDIT ? 'delRow(\'commitments\',\'' + id + '\')' : '' }));
+}
+function markDoc(jobId, type, fileId) {
+  var d = S.documents.filter(function (x) { return x.jobId === jobId && x.type === type; })[0];
+  var o = Object.assign({}, d || { jobId: jobId, type: type, sentToClient: false, order: 99 }, { status: 'Received', receivedOn: (d && d.receivedOn) || today() });
+  if (fileId) o.fileId = fileId;
+  return put('documents', o);
+}
+function editTx(id, dir, prefill) {
+  var x = id ? Object.assign({}, find(S.transactions, id)) : Object.assign({ dir: dir || 'IN', category: dir === 'OUT' ? 'Supplier' : 'Client', mode: 'Bank', ccy: 'USD', rate: 1, date: today() }, prefill || {});
+  var info = x._info; delete x._info;
+  var allocs = lgAllocs(x).map(function (a) { return { jobId: a.jobId, amount: a.amount }; });
+  if (!allocs.length && x.jobId) allocs = [{ jobId: x.jobId, amount: id ? x.amount : (x.amount || '') }];
+  if (!allocs.length && !id && CUR_JOB && location.hash.indexOf('job-') === 1) allocs = [{ jobId: CUR_JOB, amount: x.amount || '' }];
+  if (!x.counterparty && allocs[0]) { var jj = S.jobs.filter(function (j) { return j.jobId === allocs[0].jobId; })[0]; if (jj) x.counterparty = x.dir === 'IN' ? jj.client : (x.category === 'Supplier' ? jj.supplier : ''); }
+  form(id ? 'Edit movement' : (x.dir === 'IN' ? 'New receipt' : 'New payment'), F.tx(), x, function (o) {
+    if (!o.id) { o.enteredBy = ME ? ME.id : ''; o.enteredOn = today(); }
+    if (o.dir === 'IN') o.category = o.category || 'Client';
+    return put('transactions', o);
+  }, { del: id && CAN_EDIT ? 'delRow(\'transactions\',\'' + id + '\')' : '', top: info ? '<div class="alert info" style="cursor:default;margin-top:10px"><div>' + info + '</div></div>' : '',
+    extra: '<div class="card" style="margin:6px 0 0;padding:12px"><div class="row"><h2 style="margin:0">Allocate to jobs</h2><span class="sp"></span><button type="button" class="sm" onclick="autoAlloc()">Auto-allocate</button><button type="button" class="sm" onclick="addAllocRow()">Add job</button></div>' +
+      '<p class="hint" style="margin:6px 0">One receipt or payment can cover several jobs. Any amount left over stays unallocated (client advance / supplier credit) until you allocate it.</p><div id="allocRows"></div><div id="allocSum" class="hint"></div></div>',
+    afterRender: function () { ALLOC = allocs.length ? allocs : []; renderAlloc(); ['f_amount', 'f_dir', 'f_counterparty', 'f_ccy', 'f_rate'].forEach(function (k) { if ($(k)) $(k).addEventListener('input', allocSummary); }); },
+    onRead: function (o) {
+      readAllocRows();
+      var total = Number(o.amount) || 0, rows = ALLOC.filter(function (a) { return a.jobId; });
+      var blank = rows.filter(function (a) { return !(Number(a.amount) > 0); });
+      if (blank.length > 1) return 'Enter an amount on each allocation line (only one line can be left empty to take the remainder).';
+      var used = rows.reduce(function (sum, a) { return sum + (Number(a.amount) || 0); }, 0);
+      if (blank.length === 1) blank[0].amount = Math.round((total - used) * 100) / 100;
+      used = rows.reduce(function (sum, a) { return sum + (Number(a.amount) || 0); }, 0);
+      if (used - total > 0.01) return 'Allocated ' + fmt(used, 2) + ' is more than the movement amount ' + fmt(total, 2) + '.';
+      var seen = {}; for (var i = 0; i < rows.length; i++) { if (seen[rows[i].jobId]) return 'Job ' + rows[i].jobId + ' appears twice in the allocation.'; seen[rows[i].jobId] = 1; }
+      o.allocations = rows.filter(function (a) { return Number(a.amount) > 0; }).map(function (a) { return { jobId: a.jobId, amount: Number(a.amount) }; });
+      o.jobId = o.allocations.length ? o.allocations[0].jobId : '';
+      if (!o.allocations.length && !o.counterparty) return 'Unallocated movement: enter the counterparty so it can be allocated later.';
+      return '';
+    } });
+}
+var ALLOC = [];
+function jobOptions(sel) {
+  var list = S.jobs.filter(function (j) { return CLOSED_STATUSES.indexOf(j.status) < 0 || j.jobId === sel; });
+  return '<option value="">— choose job —</option>' + list.map(function (j) { return '<option value="' + esc(j.jobId) + '"' + (j.jobId === sel ? ' selected' : '') + '>' + esc(j.jobId + ' · ' + j.salesPfi + ' · ' + j.client) + '</option>'; }).join('');
+}
+function renderAlloc() {
+  $('allocRows').innerHTML = ALLOC.map(function (a, i) {
+    return '<div class="row" style="margin-bottom:6px"><select class="ajob" data-i="' + i + '" style="flex:2;min-width:0" onchange="readAllocRows();allocSummary()">' + jobOptions(a.jobId) + '</select>' +
+      '<input class="aamt" data-i="' + i + '" type="number" step="any" placeholder="Amount (empty = remainder)" style="flex:1;min-width:0" value="' + esc(a.amount) + '" oninput="readAllocRows();allocSummary()">' +
+      '<button type="button" class="link" onclick="readAllocRows();ALLOC.splice(' + i + ',1);renderAlloc()">Remove</button></div>';
+  }).join('') || '<div class="hint">Not allocated to any job yet.</div>';
+  allocSummary();
+}
+function readAllocRows() {
+  var js = document.querySelectorAll('.ajob'), as = document.querySelectorAll('.aamt');
+  ALLOC = Array.prototype.map.call(js, function (el, i) { var v = as[i].value; return { jobId: el.value, amount: v === '' ? '' : parseFloat(v) }; });
+}
+function addAllocRow() { readAllocRows(); ALLOC.push({ jobId: '', amount: '' }); renderAlloc(); }
+function allocSummary() {
+  if (!$('allocSum')) return;
+  var total = parseFloat(($('f_amount') || {}).value) || 0, ccy = ($('f_ccy') || {}).value || '';
+  var used = ALLOC.reduce(function (a, r) { return a + (Number(r.amount) || 0); }, 0), blanks = ALLOC.filter(function (r) { return r.jobId && !(Number(r.amount) > 0); }).length;
+  var left = Math.round((total - used) * 100) / 100;
+  $('allocSum').innerHTML = 'Allocated ' + fmt(used, 2) + ' of ' + fmt(total, 2) + ' ' + esc(ccy) + ' · ' + (blanks === 1 && left > 0 ? 'the empty line takes the remaining ' + fmt(left, 2) :
+    left > 0.009 ? '<span class="amb">' + fmt(left, 2) + ' unallocated</span>' : left < -0.009 ? '<span class="red">over-allocated by ' + fmt(-left, 2) + '</span>' : '<span class="grn">fully allocated</span>');
+}
+/** Fill allocation lines: oldest deadlines first, for this counterparty's open balances. */
+function autoAlloc() {
+  readAllocRows();
+  var total = parseFloat(($('f_amount') || {}).value) || 0, dir = ($('f_dir') || {}).value, ccy = ($('f_ccy') || {}).value || 'USD';
+  var rate = ccy === 'USD' ? 1 : parseFloat(($('f_rate') || {}).value) || 0, party = words(($('f_counterparty') || {}).value), cat = ($('f_category') || {}).value;
+  if (!total) { $('allocSum').textContent = 'Enter the amount first.'; return; }
+  if (ccy !== 'USD' && !rate) { $('allocSum').textContent = 'Enter the FX rate first.'; return; }
+  var d = computed(), jobsById = {}; S.jobs.forEach(function (j) { jobsById[j.jobId] = j; });
+  var c0 = cat && cat !== 'Client' ? cat : 'Supplier';
+  var match = function (name) { var w = words(name); return !party.length || w.some(function (x) { return party.indexOf(x) > -1; }); };
+  var cands = d.summaries.filter(function (s) {
+    if (CLOSED_STATUSES.indexOf(s.status) > -1) return false;
+    var j = jobsById[s.jobId];
+    if (dir === 'IN') return s.receivableUSD > 0 && match(j.client);
+    return s.due[c0] > 0 && (match(j.supplier) || S.commitments.some(function (e) { return e.jobId === s.jobId && e.category === c0 && match(e.counterparty); }));
+  }).map(function (s) { return { jobId: s.jobId, dueUSD: dir === 'IN' ? s.receivableUSD : s.due[c0], date: dir === 'IN' ? s.deadlines.client : s.deadlines[c0] }; })
+    .sort(function (a, b) { return (a.date || '9999') < (b.date || '9999') ? -1 : 1; });
+  if (!cands.length) { $('allocSum').textContent = 'No open balance found for this counterparty.'; return; }
+  var left = total; ALLOC = [];
+  cands.forEach(function (c) { if (left <= 0.009) return; var due = Math.round(c.dueUSD * rate * 100) / 100, amt = Math.min(due, left); ALLOC.push({ jobId: c.jobId, amount: Math.round(amt * 100) / 100 }); left -= amt; });
+  renderAlloc();
+}
+
+function editDoc(id) {
+  var x = id ? find(S.documents, id) : { jobId: CUR_JOB, type: 'Other', status: 'Received', receivedOn: today(), sentToClient: false, order: 99 };
+  form(id ? 'Document: ' + x.type : 'New document', F.doc(), Object.assign({}, x), function (o) {
+    if (o.status === 'Received' && !o.receivedOn) o.receivedOn = today();
+    if (o.sentToClient && !o.sentOn) o.sentOn = today();
+    return put('documents', o);
+  }, { del: id && CAN_EDIT ? 'delRow(\'documents\',\'' + id + '\')' : '' });
+}
+function quickDoc(id, patch) {
+  var x = Object.assign({}, find(S.documents, id), patch);
+  if (patch.status === 'Received' && !x.receivedOn) x.receivedOn = today();
+  if (patch.sentToClient === true && !x.sentOn) x.sentOn = today();
+  if (patch.sentToClient === false) x.sentOn = '';
+  put('documents', x).then(function () { toast('Document updated'); }, function (e) { toast('Error: ' + e.message); });
+}
+function attachDoc(id) {
+  pickFile(function (file) {
+    toast('Uploading…');
+    uploadFile(file).then(function (u) { return put('documents', Object.assign({}, find(S.documents, id), { fileId: u.fileId, status: 'Received', receivedOn: find(S.documents, id).receivedOn || today() })); })
+      .then(function () { toast('File attached'); }, function (e) { toast('Error: ' + e.message); });
+  });
+}
+function delRow(coll, id) { confirmBox('Delete this line?', function () { return remove(coll, id); }); }
+function pickFile(cb, accept) { var i = document.createElement('input'); i.type = 'file'; i.accept = accept || '.pdf,.jpg,.jpeg,.png,.txt,.xml'; i.onchange = function () { if (i.files[0]) cb(i.files[0]); }; i.click(); }
+
+/* ---------------- reading documents ---------------- */
+function pdfLib() { return window.pdfjsLib || null; }
+function fileText(file) {
+  if (/\.(txt|xml|fin|mt|out)$/i.test(file.name) || /text|xml/.test(file.type)) return file.text();
+  if ((/pdf/.test(file.type) || /\.pdf$/i.test(file.name)) && pdfLib()) {
+    return file.arrayBuffer().then(function (buf) { return pdfLib().getDocument({ data: buf }).promise; }).then(function (pdf) {
+      var pages = [], n = Math.min(pdf.numPages, 5), chain = Promise.resolve();
+      for (var i = 1; i <= n; i++) (function (p) { chain = chain.then(function () { return pdf.getPage(p).then(function (pg) { return pg.getTextContent(); }).then(function (tc) {
+        var lines = {}, out = [];
+        tc.items.forEach(function (it) { var y = Math.round(it.transform[5]); (lines[y] = lines[y] || []).push(it); });
+        Object.keys(lines).sort(function (a, b) { return b - a; }).forEach(function (y) { out.push(lines[y].sort(function (a, b) { return a.transform[4] - b.transform[4]; }).map(function (it) { return it.str; }).join(' ')); });
+        pages.push(out.join('\n'));
+      }); }); })(i);
+      return chain.then(function () { return pages.join('\n'); });
+    }).catch(function () { return ''; });
+  }
+  return Promise.resolve('');
+}
+function fileImages(file) {
+  if (/image\//.test(file.type)) return Promise.resolve([file]);
+  if ((/pdf/.test(file.type) || /\.pdf$/i.test(file.name)) && pdfLib()) {
+    return file.arrayBuffer().then(function (buf) { return pdfLib().getDocument({ data: buf }).promise; }).then(function (pdf) {
+      var out = [], chain = Promise.resolve();
+      for (var i = 1; i <= Math.min(pdf.numPages, 3); i++) (function (n) {
+        chain = chain.then(function () { return pdf.getPage(n); }).then(function (pg) {
+          var vp = pg.getViewport({ scale: 2 }), c = document.createElement('canvas'); c.width = vp.width; c.height = vp.height;
+          return pg.render({ canvasContext: c.getContext('2d'), viewport: vp }).promise.then(function () { return new Promise(function (res) { c.toBlob(res, 'image/jpeg', 0.85); }); });
+        }).then(function (b) { if (b) out.push(b); });
+      })(i);
+      return chain.then(function () { return out; });
+    }).catch(function () { return []; });
+  }
+  return Promise.resolve([]);
+}
+var AI_SCHEMAS = {
+  advice: 'Fields: format (string, e.g. "MT103", "pacs.008", "bank advice"), valueDate ("YYYY-MM-DD"), currency (ISO 4217 code), amount (number, no thousands separators), reference (bank reference), uetr (string), ordering (ordering customer / payer name), beneficiary (beneficiary name), remittance (payment details / purpose text).',
+  commit: 'Fields: supplier (issuer company name), reference (PFI or invoice number), date ("YYYY-MM-DD"), currency (ISO 4217 code), amount (number: grand total payable), dueDate ("YYYY-MM-DD" or null), category ("Supplier" for a vehicle/goods pro-forma, "Freight" for shipping/freight invoices, "Inspection" for SGS/Bureau Veritas, "Other" otherwise), description (short: models and quantities), lines (vehicle lines only, array of {model: brand + model + trim, qty: number, unitCost: number}; empty array for non-vehicle invoices).',
+  quote: 'Fields: supplier (issuer company name), reference (quote or PFI number), date ("YYYY-MM-DD"), currency (ISO 4217 code), amount (number: grand total), units (number: total vehicles), description (models and quantities, one line per model, with model year, trim and colour if shown), lines (array of {model: brand + model + trim, qty: number, unitCost: number}).',
+  job: 'This is OUR sales pro-forma invoice (issued by our company to a buyer). Fields: salesPfi (pro-forma invoice number), pfiDate ("YYYY-MM-DD"), client (buyer / consignee company name), country (ISO 3166-1 alpha-2 code of the destination country), destPort (port of discharge), incoterm (FOB, CFR, CIF, CPT, CIP, DAP or EXW), units (number: total vehicles), currency (ISO 4217 code), amount (number: grand total), description (models and quantities, one line per model, with model year, trim and colour if shown; VINs if listed), lines (array of {model: brand + model + trim, qty: number, unitPrice: number}).'
+};
+function aiRead(kind, file, text) {
+  if (!SAMPLE) return Promise.reject(new Error('Reading with Claude is not available in this view.'));
+  var prompt = 'You extract data from a trade document of a vehicle export company. Return ONLY a JSON object, no prose. Use null for anything not present; never guess numbers. ' + AI_SCHEMAS[kind];
+  var hasText = text && text.replace(/\s/g, '').length > 80;
+  return (hasText ? Promise.resolve([]) : fileImages(file)).then(function (imgs) {
+    if (!hasText && !imgs.length) throw new Error('this file type cannot be read; use a PDF or an image');
+    var input = prompt + (hasText ? '\n\nDocument text:\n' + text.slice(0, 15000) : '\n\nThe document is a scan: read it from the attached page image(s).');
+    var opts = { modelTier: 'default' };
+    if (imgs.length) opts.images = imgs;
+    return SAMPLE.json(input, opts);
+  });
+}
+function aiFillForm(kind) {
+  var f = chosenFile(); if (!f) { $('aiStatus').textContent = 'Choose a file first.'; return; }
+  $('aiStatus').textContent = 'Claude is reading the document…';
+  fileText(f).then(function (txt) { return aiRead(kind, f, txt); }).then(function (r) {
+    r = r || {};
+    var set = function (k, v) { var el = $('f_' + k); if (el && v !== null && v !== undefined && v !== '') el.value = v; };
+    if (kind === 'job') {
+      set('salesPfi', r.salesPfi); set('pfiDate', r.pfiDate); set('client', r.client); set('country', r.country ? String(r.country).toUpperCase() : '');
+      set('destPort', r.destPort); if (r.incoterm && ['FOB', 'CFR', 'CIF', 'CPT', 'CIP', 'DAP', 'EXW'].indexOf(String(r.incoterm).toUpperCase()) > -1) set('incoterm', String(r.incoterm).toUpperCase());
+      set('units', r.units); set('saleAmount', r.amount); set('description', r.description);
+      if (r.currency && CURRENCIES.indexOf(r.currency) > -1) { set('saleCcy', r.currency); fxFill('saleRate', r.currency); }
+    } else {
+      set('counterparty', r.supplier); set('supplier', r.supplier); set('reference', r.reference); set('date', r.date); set('dueDate', r.dueDate);
+      set('amount', r.amount); set('units', r.units); set('description', r.description);
+      if (r.category && COMMIT_CATEGORIES.indexOf(r.category) > -1) set('category', r.category);
+      if (r.currency && CURRENCIES.indexOf(r.currency) > -1) { set('ccy', r.currency); fxFill('rate', r.currency); }
+    }
+    if (Array.isArray(r.lines) && r.lines.length && $('lineRows')) {
+      LINES = r.lines.filter(function (l) { return l && l.model; }).map(function (l) { return { model: l.model, qty: Number(l.qty) || '', price: Number(kind === 'job' ? l.unitPrice : l.unitCost) || '' }; });
+      renderLines();
+    }
+    usdPreview();
+    $('aiStatus').textContent = 'Fields filled by Claude: check them before saving.';
+  }).catch(function (e) { $('aiStatus').textContent = (e && e.code === 'not_granted') ? 'Reading with Claude was not allowed.' : 'Could not read the document: ' + (e.message || e.code || e); });
+}
+function guessDir(p) {
+  var names = String(settings().ownNames || '').toUpperCase().split(',').map(function (s) { return s.trim(); }).filter(String);
+  var hit = function (s) { s = String(s || '').toUpperCase(); return names.some(function (n) { return s.indexOf(n) > -1; }); };
+  return hit(p.beneficiary) && !hit(p.ordering) ? 'IN' : 'OUT';
+}
+function importAdvice(jobId) {
+  pickFile(function (file) {
+    toast('Reading the advice…');
+    var up = ASSETS ? uploadFile(file).catch(function () { return null; }) : Promise.resolve(null);
+    Promise.all([up, fileText(file)]).then(function (res) {
+      var u = res[0], text = res[1], p = swParse(text), how = p.format;
+      var need = !(p.amount && p.currency && p.valueDate) || p.confidence < 90;
+      var ai = need && SAMPLE ? aiRead('advice', file, text).then(function (r) {
+        r = r || {};
+        how = (p.amount ? p.format + ' + ' : '') + 'read by Claude';
+        ['valueDate', 'currency', 'reference', 'uetr', 'ordering', 'beneficiary', 'remittance'].forEach(function (k) { if (!p[k] && r[k]) p[k] = r[k]; });
+        if (!p.amount && r.amount) p.amount = Number(r.amount);
+        if (!p.confidence || p.confidence < 70) p.confidence = 75;
+        return p;
+      }).catch(function () { return p; }) : Promise.resolve(p);
+      return ai.then(function (p) { showAdvice(p, how, u, jobId, text); });
+    });
+  }, '.pdf,.jpg,.jpeg,.png,.txt,.xml,.fin');
+}
+function showAdvice(p, how, u, jobId, text) {
+  var dir = guessDir(p), rem = String(p.remittance || '').toUpperCase();
+  var nature = /BALANCE|SOLDE|FINAL/.test(rem) ? 'Balance' : /DEPOSIT|ADVANCE|DOWN ?PAYMENT|ACOMPTE/.test(rem) ? (dir === 'IN' ? 'Advance' : 'Deposit') : 'Payment';
+  var info = 'Advice read (' + esc(how || 'unknown') + ', confidence ' + (p.confidence || 0) + '%): ' + (p.amount ? fmt(p.amount, 2) + ' ' + esc(p.currency) : 'amount not found') +
+    ' · value date ' + fmtD(p.valueDate) + (p.remittance ? '<br>Details: ' + esc(p.remittance) : '') + '<br>Check before saving.';
+  var r = settings().rates;
+  var prefill = { dir: dir, category: dir === 'IN' ? 'Client' : 'Supplier', nature: nature, mode: 'Bank', date: p.valueDate || today(), ccy: p.currency || 'USD',
+    amount: p.amount || '', rate: !p.currency || p.currency === 'USD' ? 1 : (r[p.currency] || ''), reference: p.reference || '', uetr: p.uetr || '',
+    counterparty: (dir === 'IN' ? p.ordering : p.beneficiary) || '', notes: p.remittance || '', fileId: u ? u.fileId : undefined, _info: info };
+  if (jobId) { CUR_JOB = jobId; prefill.jobId = jobId; editTx(null, dir, prefill); return; }
+  var sug = lgSuggestJob([p.remittance, p.reference, (text || '').slice(0, 3000)].join(' '), S.jobs).map(function (s) { return s.jobId; });
+  var jobs = S.jobs.filter(function (j) { return CLOSED_STATUSES.indexOf(j.status) < 0; }).sort(function (a, b) { return (sug.indexOf(b.jobId) > -1) - (sug.indexOf(a.jobId) > -1); });
+  if (!jobs.length) { toast('Create a job first.'); return; }
+  openModal('<div class="row"><h2 style="margin:0">Link the advice to a job</h2><span class="sp"></span><button class="link" onclick="closeModal()">Close</button></div>' +
+    '<div class="alert info" style="cursor:default;margin-top:10px"><div>' + info + '</div></div><label class="f">Job' + (sug.length ? ' (suggested first)' : '') + '<select id="sjob">' +
+    jobs.map(function (j) { return '<option value="' + esc(j.jobId) + '">' + (sug.indexOf(j.jobId) > -1 ? '★ ' : '') + esc(j.jobId + ' · ' + j.salesPfi + ' · ' + j.client) + '</option>'; }).join('') +
+    '</select></label><div class="row"><span class="sp"></span><button class="pri" id="sgo">Continue</button></div>');
+  $('sgo').onclick = function () { var id = $('sjob').value; prefill.jobId = id; go(jobHash(id)); setTimeout(function () { CUR_JOB = id; editTx(null, dir, prefill); }, 200); };
+}
+
+/* ---------------- schedule / alerts ---------------- */
+function viewSchedule() {
+  var d = computed();
+  function tbl(rows, verb) {
+    if (!rows.length) return '<div class="empty">Nothing to ' + verb + '.</div>';
+    var tot = rows.reduce(function (a, r) { return a + r.amountUSD; }, 0);
+    return '<table class="t resp"><thead><tr><th>Due</th><th>Job</th><th>Client</th><th>For</th><th class="num">USD</th></tr></thead><tbody>' + rows.map(function (r) {
+      var dd = dayDiff(r.date);
+      return '<tr class="click" onclick="go(\'' + jobHash(r.jobId) + '\')"><td data-l="Due" class="' + (dd !== null && dd < 0 ? 'red' : dd !== null && dd <= 5 ? 'amb' : '') + '">' + fmtD(r.date) +
+        (dd !== null ? ' <span class="mut">(' + (dd < 0 ? 'D+' + (-dd) : 'D-' + dd) + ')</span>' : '') + '</td><td data-l="Job">' + esc(r.jobId) + '</td><td data-l="Client">' + esc(r.party) + '</td><td data-l="For">' + esc(r.label) + '</td><td data-l="USD" class="num">' + fmt(r.amountUSD) + '</td></tr>';
+    }).join('') + '<tr><td colspan="4"><b>Total</b></td><td class="num"><b>' + fmt(tot) + '</b></td></tr></tbody></table>';
+  }
+  app('<h1>Schedule</h1><p class="sub">Client balances fall due at ETD − ' + esc(settings().rules.CLIENT_DAYS_BEFORE_ETD) + ' days; payments at the PFI or invoice due date, otherwise at ETD.</p>' +
+    '<div class="card"><h2>To collect from clients</h2>' + tbl(d.schedule.receivables, 'collect') + '</div><div class="card"><h2>To pay (suppliers, freight, fees)</h2>' + tbl(d.schedule.payables, 'pay') + '</div>');
+}
+function viewAlerts() {
+  var d = computed(), g = { danger: [], warning: [], info: [] };
+  d.alerts.forEach(function (a) { g[a.level].push(a); });
+  app('<h1>Alerts</h1><p class="sub">' + fmtD(d.today) + ' · ' + d.alerts.length + ' alert(s)</p>' + (d.alerts.length ? '' : '<div class="card empty">No alerts.</div>') +
+    (g.danger.length ? '<h2>Urgent</h2>' + g.danger.map(alertHtml).join('') : '') + (g.warning.length ? '<h2 style="margin-top:14px">To handle</h2>' + g.warning.map(alertHtml).join('') : '') +
+    (g.info.length ? '<h2 style="margin-top:14px">For information</h2>' + g.info.map(alertHtml).join('') : ''));
+}
+
+/* ---------------- quotes ---------------- */
+function viewQuotes() {
+  var rows = S.quotes.slice().sort(function (a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; });
+  app('<div class="row"><div><h1>Supplier quotes</h1><p class="sub">Supplier prices obtained before the sales PFI; link them to the job once it exists.</p></div><span class="sp"></span>' + (CAN_WRITE ? '<button class="pri" onclick="editQuote()">New quote</button>' : '') + '</div>' +
+    '<div class="card">' + (rows.length ? '<table class="t resp"><thead><tr><th>Date</th><th>Supplier</th><th>Ref.</th><th>Description</th><th class="num">Amount</th><th>Job</th><th></th></tr></thead><tbody>' + rows.map(function (c) {
+      return '<tr><td data-l="Date">' + fmtD(c.date) + '</td><td data-l="Supplier">' + esc(c.supplier) + '</td><td data-l="Ref.">' + esc(c.reference) + '</td><td data-l="Description">' + esc(c.description) + '</td>' +
+        '<td data-l="Amount" class="num">' + fmt(c.amount, 2) + ' ' + esc(c.ccy) + '</td><td data-l="Job">' + (c.jobId ? '<a href="#' + jobHash(c.jobId) + '">' + esc(c.jobId) + '</a>' : pill('warning', 'not linked')) + '</td>' +
+        '<td data-l="">' + (c.fileId ? '<a target="_blank" href="' + fileUrl(c.fileId) + '">File</a> ' : '') + (CAN_WRITE && !c.jobId ? '<button class="link" onclick="linkQuote(\'' + c.id + '\')">Link</button>' : '') + (CAN_WRITE ? '<button class="link" onclick="editQuote(\'' + c.id + '\')">Edit</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody></table>' : '<div class="empty">No quotes yet.</div>') + '</div>');
+}
+function editQuote(id) {
+  var c = id ? find(S.quotes, id) : { date: today(), ccy: 'USD', rate: 1, status: 'Open' };
+  var wasLinked = !!c.jobId;
+  form(id ? 'Edit quote' : 'New quote', F.quote(), Object.assign({}, c), function (o) {
+    if (o.jobId && !wasLinked) o.status = 'Selected';
+    return put('quotes', o).then(function (q) { if (q.jobId && !wasLinked) return quoteToCommitment(q); });
+  }, linesOpts(c.lines, 'unitCost', 'Unit cost', 'amount', { del: id && CAN_EDIT ? 'delRow(\'quotes\',\'' + id + '\')' : '' }));
+}
+function quoteToCommitment(q) {
+  var dup = S.commitments.some(function (e) { return e.jobId === q.jobId && e.category === 'Supplier' && q.reference && e.reference === q.reference; });
+  if (dup) return Promise.resolve();
+  return put('commitments', { jobId: q.jobId, category: 'Supplier', counterparty: q.supplier, reference: q.reference, date: q.date, ccy: q.ccy, amount: q.amount, rate: q.rate, fileId: q.fileId, lines: q.lines || [], notes: 'From quote ' + (q.reference || q.id) });
+}
+function words(t) { return String(t || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').split(' ').filter(function (w) { return w.length >= 3 && ['the', 'and', 'with', 'for', 'units', 'unit', 'pcs', 'model', 'year', 'color', 'colour'].indexOf(w) < 0; }); }
+function quoteScore(q, j) {
+  var jw = words(j.description + ' ' + (j.supplier || '')), qw = words(q.description + ' ' + q.supplier), common = 0;
+  qw.forEach(function (w) { if (jw.indexOf(w) > -1) common++; });
+  var sc = Math.min(50, common * 10);
+  if (j.supplier && q.supplier && words(j.supplier).some(function (w) { return words(q.supplier).indexOf(w) > -1; })) sc += 25;
+  if (j.units && q.units && Number(j.units) === Number(q.units)) sc += 20;
+  var dq = lgDay(q.date), dj = lgDay(j.pfiDate);
+  if (dq !== null && dj !== null && dj - dq >= -7 && dj - dq <= 90) sc += 10;
+  return Math.min(100, sc);
+}
+/** Offer the unlinked supplier quotes for a job, best matches first and pre-ticked. */
+function suggestQuotes(jobId, afterCreate) {
+  var j = S.jobs.filter(function (x) { return x.jobId === jobId; })[0], open = S.quotes.filter(function (q) { return !q.jobId; });
+  if (!j || !open.length) { if (!afterCreate) toast('No unlinked supplier quotes.'); return; }
+  var ranked = open.map(function (q) { return { q: q, s: quoteScore(q, j) }; }).sort(function (a, b) { return b.s - a.s; });
+  openModal('<div class="row"><h2 style="margin:0">Link supplier quotes to ' + esc(jobId) + '</h2><span class="sp"></span><button class="link" onclick="closeModal()">' + (afterCreate ? 'Later' : 'Close') + '</button></div>' +
+    '<p class="hint">' + (afterCreate ? 'The job exists now: link the supplier price(s) used to build this sales PFI. ' : '') + 'Best matches (supplier, models, quantity, date) come first and are ticked. Each linked quote becomes the job\'s supplier commitment.</p>' +
+    '<table class="t">' + ranked.map(function (r, i) {
+      return '<tr><td style="width:28px"><input type="checkbox" class="lq" data-id="' + esc(r.q.id) + '" style="width:auto"' + (r.s >= 35 ? ' checked' : '') + '></td><td><b>' + esc(r.q.supplier) + '</b> · ' + esc(r.q.reference || '') + ' · ' + fmtD(r.q.date) +
+        '<br><span class="mut">' + esc(r.q.description || '') + '</span></td><td class="num">' + fmt(r.q.amount, 2) + ' ' + esc(r.q.ccy) + '</td><td>' + pill(r.s >= 60 ? 'ok' : r.s >= 35 ? 'info' : '', 'match ' + r.s + '%') + '</td></tr>';
+    }).join('') + '</table><div class="row" style="margin-top:12px"><span class="sp"></span><button class="pri" id="lgo">Link selected</button></div>');
+  $('lgo').onclick = function () {
+    var ids = Array.prototype.filter.call(document.querySelectorAll('.lq'), function (c) { return c.checked; }).map(function (c) { return c.dataset.id; });
+    if (!ids.length) { closeModal(); return; }
+    var chain = Promise.resolve();
+    ids.forEach(function (id) { var q = Object.assign({}, find(S.quotes, id), { jobId: jobId, status: 'Selected' }); chain = chain.then(function () { return put('quotes', q); }).then(function () { return quoteToCommitment(q); }); });
+    chain.then(function () { closeModal(); toast(ids.length + ' quote(s) linked'); }, function (e) { toast('Error: ' + e.message); });
+  };
+}
+function linkQuote(id) {
+  var jobs = S.jobs.filter(function (j) { return CLOSED_STATUSES.indexOf(j.status) < 0; });
+  if (!jobs.length) { toast('Create the job first: it exists once the sales PFI is issued.'); return; }
+  var q = find(S.quotes, id);
+  jobs.sort(function (a, b) { return quoteScore(q, b) - quoteScore(q, a); });
+  openModal('<div class="row"><h2 style="margin:0">Link quote to a job</h2><span class="sp"></span><button class="link" onclick="closeModal()">Close</button></div>' +
+    '<label class="f" style="margin-top:12px">Job (best match first)<select id="ljob">' + jobs.map(function (j) { return '<option value="' + esc(j.jobId) + '">' + esc(j.jobId + ' · ' + j.salesPfi + ' · ' + j.client) + ' — match ' + quoteScore(q, j) + '%</option>'; }).join('') + '</select></label>' +
+    '<div class="row" style="margin-top:12px"><span class="sp"></span><button class="pri" id="lgo">Link and create supplier commitment</button></div>');
+  $('lgo').onclick = function () {
+    var nq = Object.assign({}, q, { jobId: $('ljob').value, status: 'Selected' });
+    put('quotes', nq).then(function () { return quoteToCommitment(nq); }).then(function () { closeModal(); toast('Quote linked'); }, function (e) { toast('Error: ' + e.message); });
+  };
+}
+
+/* ---------------- settings & export ---------------- */
+function viewSettings() {
+  var s = settings(), dis = CAN_EDIT ? '' : ' disabled';
+  var rates = CURRENCIES.map(function (c) { return '<tr><td>' + c + '</td><td><input data-ccy="' + c + '" class="rate" value="' + esc(s.rates[c] || '') + '"' + (c === 'USD' ? ' disabled' : dis) + '></td></tr>'; }).join('');
+  var cd = s.countryDocs.concat([{}]).map(countryRow).join('');
+  app('<h1>Settings</h1><p class="sub">' + (CAN_EDIT ? '' : 'Read only: editors can change settings. ') + 'Signed in as ' + esc(ME && ME.name || 'you') + '. Access to this app is managed from the page\'s Share menu.</p>' +
+    '<div class="card"><div class="row"><h2>Export</h2><span class="sp"></span></div><p class="hint">Excel workbook with every job, commitment, movement, document and a per-job cash summary. Keep a monthly copy in the company Drive for record-keeping.</p>' +
+    (DL && window.XLSX ? '<button class="pri" onclick="exportXlsx()">Export to Excel</button>' : '<span class="hint">Export is not available in this view.</span>') + '</div>' +
+    '<div class="card"><h2>Deadline and alert rules</h2><table class="t">' + Object.keys(RULE_LABELS).map(function (k) {
+      return '<tr><td style="width:60%">' + esc(RULE_LABELS[k]) + '</td><td><input class="rule" data-k="' + k + '" type="number" step="any" value="' + esc(s.rules[k]) + '"' + dis + '></td></tr>'; }).join('') + '</table></div>' +
+    '<div class="grid g2"><div class="card"><h2>Default FX rates</h2><p class="hint">Units of currency per 1 USD, used to prefill forms. Always enter the actual bank rate on each receipt or payment.</p><table class="t">' + rates + '</table></div>' +
+    '<div class="card"><h2>Documents required by country</h2><p class="hint">Used when a job is created. A country not listed gets every document as expected.</p><table class="t" id="cdTab"><thead><tr><th>Country</th><th>BIETC</th><th>Inspection</th><th>Inspection body</th></tr></thead><tbody>' + cd + '</tbody></table>' +
+    '<h2 style="margin-top:14px">Our company names</h2><p class="hint">Comma-separated; used to tell receipts from payments on payment advices.</p><input id="ownNames" value="' + esc(s.ownNames) + '"' + dis + '></div></div>' +
+    (CAN_EDIT ? '<div class="row"><span class="sp"></span><button class="pri" onclick="saveSettings()">Save settings</button></div>' : ''));
+}
+function countryRow(c) {
+  var sel = function (cls, v) { return '<select class="' + cls + '"' + (CAN_EDIT ? '' : ' disabled') + '><option' + (v !== 'No' ? ' selected' : '') + '>Yes</option><option' + (v === 'No' ? ' selected' : '') + '>No</option></select>'; };
+  return '<tr class="cdr"><td><input class="cc" value="' + esc(c.country || '') + '" placeholder="e.g. CI"' + (CAN_EDIT ? '' : ' disabled') + '></td><td>' + sel('cb', c.bietc) + '</td><td>' + sel('ci', c.inspection) + '</td><td><input class="cbody" value="' + esc(c.body || '') + '"' + (CAN_EDIT ? '' : ' disabled') + '></td></tr>';
+}
+function saveSettings() {
+  var rules = {}, rates = { USD: 1 };
+  document.querySelectorAll('.rule').forEach(function (el) { rules[el.dataset.k] = Number(el.value); });
+  document.querySelectorAll('.rate').forEach(function (el) { var v = parseFloat(el.value); if (v > 0) rates[el.dataset.ccy] = v; });
+  var cds = Array.prototype.map.call(document.querySelectorAll('.cdr'), function (r) {
+    return { country: r.querySelector('.cc').value.trim().toUpperCase(), bietc: r.querySelector('.cb').value, inspection: r.querySelector('.ci').value, body: r.querySelector('.cbody').value.trim() };
+  }).filter(function (c) { return c.country; });
+  DB.doc('settings/main').set({ rules: rules, rates: rates, countryDocs: cds, ownNames: $('ownNames').value }).then(function () { toast('Settings saved'); }, function (e) { toast('Error: ' + e.message); });
+}
+function exportXlsx() {
+  var d = computed(), wb = XLSX.utils.book_new();
+  var add = function (name, rows) { XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows.length ? rows : [{}]), name); };
+  add('Summary', d.summaries.map(function (s) { return { Job: s.jobId, 'Sales PFI': s.pfi, Client: s.client, Country: s.country, ETD: s.etd, ETA: s.eta, Status: s.status,
+    'Sale USD': s.saleUSD, 'Received USD': s.receivedUSD, 'To collect USD': s.receivableUSD, 'Committed USD': s.totalCommitUSD, 'Paid USD': s.totalPaidUSD,
+    'To pay USD': s.totalDueUSD, 'Net cash USD': s.cashNetUSD, 'Expected margin USD': s.expectedMarginUSD, 'Docs received': s.docsReceived + '/' + s.docsRequired, 'Docs to send': s.docsToSend }; }));
+  var strip = function (arr) { return arr.map(function (r) { var o = Object.assign({}, r); if (o.fileId) o.fileId = location.origin + fileUrl(o.fileId);
+    if (o.lines) o.lines = (o.lines || []).map(function (l) { return l.qty + ' x ' + l.model + ' @ ' + (l.unitPrice || l.unitCost || ''); }).join('; ');
+    if (o.allocations) o.allocations = (o.allocations || []).map(function (a) { return a.jobId + ': ' + a.amount; }).join('; ');
+    return o; }); };
+  add('Jobs', strip(S.jobs)); add('Commitments', strip(S.commitments)); add('Movements', strip(S.transactions)); add('Documents', strip(S.documents)); add('Quotes', strip(S.quotes));
+  add('Alerts', d.alerts.map(function (a) { return { Level: a.level, Job: a.jobId, Client: a.client, Alert: a.message, Date: a.date, 'Amount USD': a.amountUSD }; }));
+  var buf = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+  DL.save({ filename: 'TKX_Export_Jobs_' + today() + '.xlsx', data: new Blob([buf]) }).then(function (r) { if (r && r.status === 'saved') toast('Export saved'); }, function (e) { if (e && e.code !== 'declined') toast('Export failed: ' + (e.message || e.code)); });
+}
+
+/* ---------------- boot ---------------- */
+$('modal').addEventListener('click', function (e) { if (e.target.id === 'modal') closeModal(); });
+(function boot() {
+  if (!window.claude || !claude.use) { app('<div class="card empty">This app runs inside Claude. Open it from its claude.ai link.</div>'); return; }
+  var timer = setTimeout(function () { if (!allLoaded()) app('<div class="card empty">Data can\'t be reached yet. Check your connection; this page will update by itself.</div>'); }, 10000);
+  Promise.all(['db', 'user', 'assets', 'sample', 'downloads'].map(function (n) { return claude.use(n).catch(function () { return null; }); })).then(function (r) {
+    DB = r[0]; USER = r[1]; ASSETS = r[2]; SAMPLE = r[3]; DL = r[4];
+    if (!DB) { clearTimeout(timer); app('<div class="card empty">Sign in to Claude to use this app.</div>'); return; }
+    if (USER) {
+      try { CAN_EDIT = !!USER.canEdit(); } catch (e) { CAN_EDIT = false; }
+      Promise.resolve(USER.can ? USER.can('data.write') : null).then(function (v) { if (v === false) { CAN_WRITE = false; dataChanged(); } }).catch(function () {});
+      Promise.resolve(USER.me ? USER.me() : null).then(function (m) { ME = m; if (m && m.name) $('who').textContent = m.name; }).catch(function () {});
+    }
+    COLLS.forEach(function (c) {
+      DB.collection(c).onSnapshot(function (snap) {
+        S[c] = snap.docs.map(function (dd) { return Object.assign({}, dd.data(), { id: dd.id }); });
+        if (!snap.metadata.fromCache) LOADED[c] = true; else if (!LOADED[c]) LOADED[c] = snap.docs.length > 0;
+        if (allLoaded()) clearTimeout(timer);
+        dataChanged();
+      }, function (e) { LOADED[c] = true; toast('Data error (' + c + '): ' + (e && e.code)); dataChanged(); });
+    });
+    DB.doc('settings/main').onSnapshot(function (snap) { S.settings = snap.exists ? snap.data() : null; LOADED.settings = true; dataChanged(); }, function () { LOADED.settings = true; dataChanged(); });
+  });
+})();
+
+
+/* ---------------- vehicle lines editor ---------------- */
+var LINES = [], LINE_PRICE_KEY = 'unitPrice', LINE_TOTAL_FIELD = 'amount';
+function linesOpts(lines, priceKey, priceLabel, totalField, base) {
+  return Object.assign(base || {}, {
+    extra: '<div class="card" style="margin:6px 0 0;padding:12px"><div class="row"><h2 style="margin:0">Vehicle lines</h2><span class="sp"></span><button type="button" class="sm" onclick="addLine()">Add line</button></div>' +
+      '<p class="hint" style="margin:6px 0">One line per model (brand, model, trim). Used by the sales report: best sellers and most profitable models.</p>' +
+      '<div class="row hint" style="margin-bottom:4px"><span style="flex:3">Model</span><span style="flex:1">Qty</span><span style="flex:1.4">' + esc(priceLabel) + '</span><span style="width:60px"></span></div><div id="lineRows"></div><div id="lineSum" class="hint"></div></div>',
+    afterRender: function () { LINE_PRICE_KEY = priceKey; LINE_TOTAL_FIELD = totalField; LINES = (lines || []).map(function (l) { return { model: l.model, qty: l.qty, price: l[priceKey] }; }); renderLines(); if ($('f_' + totalField)) $('f_' + totalField).addEventListener('input', lineSummary); },
+    onRead: function (o) {
+      readLines();
+      if (LINES.some(function (l) { return l.model && !(Number(l.qty) > 0); })) return 'Each vehicle line needs a quantity.';
+      o.lines = LINES.filter(function (l) { return l.model && l.model.trim(); }).map(function (l) { var r = { model: l.model.trim(), qty: Number(l.qty) }; r[priceKey] = Number(l.price) || 0; return r; });
+      if (o.lines.length && ('units' in o || $('f_units')) && !(Number(o.units) > 0)) o.units = o.lines.reduce(function (a, l) { return a + l.qty; }, 0);
+      return '';
+    }
+  });
+}
+function renderLines() {
+  if (!$('lineRows')) return;
+  $('lineRows').innerHTML = LINES.map(function (l, i) {
+    return '<div class="row" style="margin-bottom:6px"><input class="lm" style="flex:3;min-width:0" placeholder="e.g. Toyota Hilux 2.4 GL" value="' + esc(l.model) + '" oninput="readLines();lineSummary()">' +
+      '<input class="lq" type="number" step="any" style="flex:1;min-width:0" value="' + esc(l.qty) + '" oninput="readLines();lineSummary()">' +
+      '<input class="lp" type="number" step="any" style="flex:1.4;min-width:0" value="' + esc(l.price) + '" oninput="readLines();lineSummary()">' +
+      '<button type="button" class="link" style="width:60px" onclick="readLines();LINES.splice(' + i + ',1);renderLines()">Remove</button></div>';
+  }).join('') || '<div class="hint">No lines yet.</div>';
+  lineSummary();
+}
+function readLines() {
+  var m = document.querySelectorAll('.lm'), q = document.querySelectorAll('.lq'), p = document.querySelectorAll('.lp');
+  LINES = Array.prototype.map.call(m, function (el, i) { return { model: el.value, qty: q[i].value === '' ? '' : parseFloat(q[i].value), price: p[i].value === '' ? '' : parseFloat(p[i].value) }; });
+}
+function addLine() { readLines(); LINES.push({ model: '', qty: 1, price: '' }); renderLines(); }
+function lineSummary() {
+  if (!$('lineSum')) return;
+  if (!LINES.length) { $('lineSum').textContent = ''; return; }
+  var tot = LINES.reduce(function (a, l) { return a + (Number(l.qty) || 0) * (Number(l.price) || 0); }, 0), qty = LINES.reduce(function (a, l) { return a + (Number(l.qty) || 0); }, 0);
+  var doc = parseFloat(($('f_' + LINE_TOTAL_FIELD) || {}).value) || 0, diff = Math.round((doc - tot) * 100) / 100;
+  $('lineSum').innerHTML = qty + ' vehicle(s) · lines total ' + fmt(tot, 2) + (doc ? (Math.abs(diff) < 0.01 ? ' · <span class="grn">matches the document total</span>' : ' · <span class="amb">differs from the document total by ' + fmt(diff, 2) + '</span> (other charges or a typo)') : '');
+}
+
+/* ---------------- payments ---------------- */
+var PAY_FILTER = 'all';
+function unallocatedNotice() {
+  var open = S.transactions.filter(function (t) { return lgUnallocated(t) > 0.009; });
+  if (!open.length) return '';
+  var inUSD = 0, outUSD = 0;
+  open.forEach(function (t) { var u = lgToUSD(lgUnallocated(t), t.ccy, t.rate); if (t.dir === 'IN') inUSD += u; else outUSD += u; });
+  return '<div class="alert warning" onclick="PAY_FILTER=\'open\';go(\'payments\')"><div><b>' + open.length + ' movement(s) not fully allocated to jobs</b><br>' +
+    (inUSD ? fmt(inUSD) + ' USD received from clients' : '') + (inUSD && outUSD ? ' · ' : '') + (outUSD ? fmt(outUSD) + ' USD paid to suppliers' : '') + ' · open Payments to allocate</div></div>';
+}
+function viewPayments() {
+  var list = S.transactions.slice().sort(function (a, b) { return (b.date || '') < (a.date || '') ? -1 : 1; });
+  if (PAY_FILTER === 'open') list = list.filter(function (t) { return lgUnallocated(t) > 0.009; });
+  if (PAY_FILTER === 'in') list = list.filter(function (t) { return t.dir === 'IN'; });
+  if (PAY_FILTER === 'out') list = list.filter(function (t) { return t.dir !== 'IN'; });
+  app('<div class="row"><div><h1>Payments</h1><p class="sub">Every receipt and payment, with its allocation to jobs. One movement can be split across several jobs.</p></div><span class="sp"></span>' +
+    (CAN_WRITE ? '<button onclick="importAdvice()">Import payment advice</button><button onclick="CUR_JOB=null;editTx(null,\'OUT\')">New payment</button><button class="pri" onclick="CUR_JOB=null;editTx(null,\'IN\')">New receipt</button>' : '') + '</div>' +
+    '<div class="row" style="margin:10px 0 12px"><select style="max-width:240px" onchange="PAY_FILTER=this.value;viewPayments()">' +
+    [['all', 'All movements'], ['open', 'Not fully allocated'], ['in', 'Receipts only'], ['out', 'Payments only']].map(function (o) { return '<option value="' + o[0] + '"' + (PAY_FILTER === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select></div>' +
+    '<div class="card">' + (list.length ? '<table class="t resp"><thead><tr><th>Date</th><th>Direction</th><th>Counterparty</th><th class="num">Amount</th><th>Allocated to</th><th class="num">Unallocated</th><th></th></tr></thead><tbody>' + list.map(function (t) {
+      var al = lgAllocs(t), un = lgUnallocated(t);
+      if (!al.length && t.jobId) al = [{ jobId: t.jobId, amount: t.amount }];
+      return '<tr><td data-l="Date">' + fmtD(t.date) + '</td><td data-l="Direction">' + (t.dir === 'IN' ? '<span class="grn">Receipt</span>' : 'Payment · ' + esc(t.category)) + '</td>' +
+        '<td data-l="Counterparty">' + esc(t.counterparty || '—') + '</td><td data-l="Amount" class="num">' + fmt(t.amount, 2) + ' ' + esc(t.ccy) + '</td>' +
+        '<td data-l="Allocated to">' + (al.map(function (a) { return '<a href="#' + jobHash(a.jobId) + '">' + esc(a.jobId) + '</a> ' + fmt(a.amount, 2); }).join('<br>') || '—') + '</td>' +
+        '<td data-l="Unallocated" class="num">' + (un > 0.009 ? pill('warning', fmt(un, 2) + ' ' + t.ccy) : '<span class="mut">—</span>') + '</td>' +
+        '<td data-l="">' + (t.fileId ? '<a target="_blank" href="' + fileUrl(t.fileId) + '">Proof</a> ' : '') + (CAN_WRITE ? '<button class="link" onclick="editTx(\'' + t.id + '\')">' + (un > 0.009 ? 'Allocate' : 'Edit') + '</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody></table>' : '<div class="empty">Nothing to show.</div>') + '</div>');
+}
+
+/* ---------------- sales report ---------------- */
+var REP = { period: 'all', from: '', to: '', realized: false };
+function repRange() {
+  var t = today(), y = t.slice(0, 4), m = +t.slice(5, 7);
+  if (REP.period === 'ytd') return { from: y + '-01-01', to: t };
+  if (REP.period === 'month') return { from: t.slice(0, 8) + '01', to: t };
+  if (REP.period === 'quarter') { var q0 = Math.floor((m - 1) / 3) * 3 + 1; return { from: y + '-' + ('0' + q0).slice(-2) + '-01', to: t }; }
+  if (REP.period === '12m') return { from: lgAddDays(t, -365), to: t };
+  if (REP.period === 'custom') return { from: REP.from, to: REP.to };
+  return { from: '', to: '' };
+}
+function hbars(rows, valKey, labelFn, extraFn, max) {
+  if (!rows.length) return '<div class="empty">No data for this period.</div>';
+  var top = Math.max.apply(null, rows.map(function (r) { return Math.abs(r[valKey]); }).concat([1]));
+  return rows.slice(0, max || 10).map(function (r) {
+    var w = Math.max(2, Math.round(Math.abs(r[valKey]) / top * 100));
+    return '<div style="margin:0 0 9px"><div class="row" style="font-size:13px"><span>' + labelFn(r) + '</span><span class="sp"></span><b>' + fmt(r[valKey]) + '</b></div>' +
+      '<div class="bar" style="height:7px"><i style="width:' + w + '%;' + (r[valKey] < 0 ? 'background:var(--red)' : '') + '"></i></div>' + (extraFn ? '<div class="hint">' + extraFn(r) + '</div>' : '') + '</div>';
+  }).join('');
+}
+function pct(n) { return (Math.round(n * 10) / 10).toFixed(1) + '%'; }
+function buildReport() { var d = computed(), rg = repRange(); return lgReport(S.jobs, S.commitments, d.summaries, { from: rg.from, to: rg.to, realizedOnly: REP.realized }); }
+function viewReport() {
+  var R = buildReport(), T = R.totals, rg = repRange();
+  var periodSel = '<select style="max-width:180px" onchange="REP.period=this.value;viewReport()">' + [['all', 'All time'], ['month', 'This month'], ['quarter', 'This quarter'], ['ytd', 'Year to date'], ['12m', 'Last 12 months'], ['custom', 'Custom dates']]
+    .map(function (o) { return '<option value="' + o[0] + '"' + (REP.period === o[0] ? ' selected' : '') + '>' + o[1] + '</option>'; }).join('') + '</select>';
+  var custom = REP.period === 'custom' ? '<input type="date" style="max-width:160px" value="' + esc(REP.from) + '" onchange="REP.from=this.value;viewReport()"><input type="date" style="max-width:160px" value="' + esc(REP.to) + '" onchange="REP.to=this.value;viewReport()">' : '';
+  var maxMonth = Math.max.apply(null, R.months.map(function (m) { return m.revenue; }).concat([1]));
+  app('<div class="row"><div><h1>Sales report</h1><p class="sub">Gross margin = sale − supplier cost − freight, inspection, BIETC, commission and other job costs. Period on sales PFI date' + (rg.from ? ' · ' + fmtD(rg.from) + ' to ' + fmtD(rg.to) : '') + '.</p></div><span class="sp"></span>' +
+    (DL && window.XLSX ? '<button onclick="exportReport()">Export report to Excel</button>' : '') + '</div>' +
+    '<div class="row" style="margin:6px 0 14px">' + periodSel + custom + '<label class="row" style="gap:6px;font-size:13px"><input type="checkbox" style="width:auto"' + (REP.realized ? ' checked' : '') + ' onchange="REP.realized=this.checked;viewReport()"> Shipped jobs only (realised margin)</label></div>' +
+    '<div class="grid g4" style="margin-bottom:14px"><div class="kpi"><p>Revenue (USD)</p><b>' + fmt(T.revenue) + '</b><span class="hint">' + T.jobs + ' job(s) · ' + T.units + ' vehicle(s)</span></div>' +
+    '<div class="kpi"><p>Gross margin (USD)</p><b class="' + (T.margin < 0 ? 'red' : 'grn') + '">' + fmt(T.margin) + '</b><span class="hint">' + pct(T.marginPct) + ' of revenue</span></div>' +
+    '<div class="kpi"><p>Realised (shipped jobs)</p><b>' + fmt(T.realized) + '</b><span class="hint">expected on open jobs ' + fmt(T.expected) + '</span></div>' +
+    '<div class="kpi"><p>Margin per vehicle</p><b>' + fmt((function () { var u = R.models.reduce(function (x, m) { return x + (m.revCost > 0 ? m.units : 0); }, 0); return u ? T.margin / u : 0; })()) + '</b><span class="hint">supplier cost ' + fmt(T.supplierCost) + ' · other ' + fmt(T.otherCost) + '</span></div></div>' +
+    (T.missingCost ? '<div class="alert warning" style="cursor:default"><div><b>' + T.missingCost + ' job(s) have no supplier cost yet</b>: they count in revenue and units but are left out of every margin figure until the supplier PFI or quote is entered.</div></div>' : '') +
+    '<div class="card"><h2>Gross margin by job</h2>' + (R.jobs.length ? '<table class="t resp"><thead><tr><th>Job</th><th>Client</th><th>Country</th><th>Status</th><th class="num">Revenue</th><th class="num">Supplier</th><th class="num">Other costs</th><th class="num">Margin</th><th class="num">%</th></tr></thead><tbody>' +
+      R.jobs.map(function (r) { return '<tr class="click" onclick="go(\'' + jobHash(r.jobId) + '\')"><td data-l="Job"><b>' + esc(r.jobId) + '</b></td><td data-l="Client">' + esc(r.client) + '</td><td data-l="Country">' + esc(r.country || '') + '</td>' +
+        '<td data-l="Status">' + (r.realized ? pill('ok', 'realised') : pill('info', 'expected')) + (r.missingCost ? ' ' + pill('warning', 'no cost') : '') + '</td><td data-l="Revenue" class="num">' + fmt(r.revenue) + '</td><td data-l="Supplier" class="num">' + fmt(r.supplierCost) + '</td>' +
+        '<td data-l="Other costs" class="num">' + fmt(r.otherCost) + '</td><td data-l="Margin" class="num ' + (r.margin < 0 ? 'red' : '') + '"><b>' + fmt(r.margin) + '</b></td><td data-l="%" class="num">' + pct(r.marginPct) + '</td></tr>'; }).join('') +
+      '<tr><td colspan="4"><b>Total</b></td><td class="num"><b>' + fmt(T.revenue) + '</b></td><td class="num">' + fmt(T.supplierCost) + '</td><td class="num">' + fmt(T.otherCost) + '</td><td class="num"><b>' + fmt(T.margin) + '</b></td><td class="num">' + pct(T.marginPct) + '</td></tr></tbody></table>' : '<div class="empty">No jobs in this period.</div>') + '</div>' +
+    '<div class="grid g2"><div class="card"><h2>Top clients by revenue</h2>' + hbars(R.clients, 'revenue', function (r) { return esc(r.label) + (r.country ? ' <span class="mut">· ' + esc(r.country) + '</span>' : ''); }, function (r) { return 'margin ' + fmt(r.margin) + ' (' + pct(r.marginPct) + ') · ' + r.jobs + ' job(s) · ' + r.units + ' vehicle(s) · ' + pct(T.revenue ? r.revenue / T.revenue * 100 : 0) + ' of revenue'; }) + '</div>' +
+    '<div class="card"><h2>Top clients by gross margin</h2>' + hbars(R.clients.slice().sort(function (a, b) { return b.margin - a.margin; }), 'margin', function (r) { return esc(r.label); }, function (r) { return pct(r.marginPct) + ' margin rate · revenue ' + fmt(r.revenue); }) + '</div></div>' +
+    '<div class="grid g2"><div class="card"><h2>Geography (destination country)</h2>' + hbars(R.countries, 'revenue', function (r) { return esc(r.label); }, function (r) { return (r.clientCount || 0) + ' client(s) · ' + r.jobs + ' job(s) · ' + r.units + ' vehicle(s) · margin ' + fmt(r.margin) + ' (' + pct(r.marginPct) + ')'; }) + '</div>' +
+    '<div class="card"><h2>Largest suppliers (purchases USD)</h2>' + hbars(R.suppliers, 'purchases', function (r) { return esc(r.label); }, function (r) { return r.jobs + ' job(s)' + (r.units ? ' · ' + r.units + ' vehicle(s)' : '') + ' · margin on their jobs ' + pct(r.marginPct); }) + '</div></div>' +
+    '<div class="grid g2"><div class="card"><h2>Best-selling models (units)</h2>' + hbars(R.models.slice().sort(function (a, b) { return b.units - a.units; }), 'units', function (r) { return esc(r.label); }, function (r) { return 'revenue ' + fmt(r.revenue) + ' · ' + r.jobs + ' job(s)'; }) + '</div>' +
+    '<div class="card"><h2>Most profitable models (gross margin)</h2>' + hbars(R.models, 'margin', function (r) { return esc(r.label); }, function (r) { return pct(r.marginPct) + ' · ' + fmt(r.marginPerUnit) + ' per vehicle · ' + r.units + ' sold'; }) + '</div></div>' +
+    '<div class="grid g2"><div class="card"><h2>Brands</h2>' + hbars(R.brands, 'revenue', function (r) { return esc(r.label); }, function (r) { return r.units + ' vehicle(s) · margin ' + fmt(r.margin) + ' (' + pct(r.marginPct) + ')'; }) + '</div>' +
+    '<div class="card"><h2>Monthly trend (sales PFI date)</h2>' + (R.months.length ? '<div style="display:flex;gap:8px;align-items:flex-end;height:170px;padding-top:10px">' + R.months.map(function (m) {
+      var h = Math.max(3, Math.round(m.revenue / maxMonth * 130)), hm = Math.max(0, Math.round(Math.max(0, m.margin) / maxMonth * 130));
+      return '<div style="flex:1;text-align:center;font-size:11px;color:var(--mut)"><div style="display:flex;gap:2px;align-items:flex-end;justify-content:center;height:132px"><div title="Revenue ' + fmt(m.revenue) + '" style="width:40%;height:' + h + 'px;background:var(--acc);border-radius:3px 3px 0 0"></div><div title="Margin ' + fmt(m.margin) + '" style="width:40%;height:' + hm + 'px;background:var(--grn);border-radius:3px 3px 0 0"></div></div>' + esc(m.label.slice(2)) + '</div>';
+    }).join('') + '</div><p class="hint">Blue: revenue · green: gross margin (hover for amounts)</p>' : '<div class="empty">No data.</div>') + '</div></div>');
+}
+function exportReport() {
+  var R = buildReport(), wb = XLSX.utils.book_new(), rg = repRange();
+  var add = function (name, rows) { XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(rows.length ? rows : [{}]), name); };
+  var r2 = function (n) { return Math.round(n * 100) / 100; };
+  add('Totals', [{ From: rg.from || 'all', To: rg.to || 'all', 'Shipped only': REP.realized ? 'yes' : 'no', 'Revenue USD': R.totals.revenue, 'Supplier cost USD': R.totals.supplierCost, 'Other costs USD': R.totals.otherCost, 'Gross margin USD': R.totals.margin, 'Margin %': r2(R.totals.marginPct), Jobs: R.totals.jobs, Vehicles: R.totals.units, 'Realised margin USD': R.totals.realized, 'Expected margin USD': R.totals.expected }]);
+  add('Margin by job', R.jobs.map(function (r) { return { Job: r.jobId, 'Sales PFI': r.pfi, Client: r.client, Country: r.country, 'PFI date': r.pfiDate, ETD: r.etd, Status: r.status, Realised: r.realized ? 'yes' : 'no', 'Revenue USD': r.revenue, 'Supplier cost USD': r.supplierCost, 'Other costs USD': r.otherCost, 'Gross margin USD': r.margin, 'Margin %': r2(r.marginPct), Vehicles: r.units }; }));
+  var grp = function (rows, extra) { return rows.map(function (r) { return Object.assign({ Name: r.label, 'Revenue USD': r2(r.revenue), 'Gross margin USD': r2(r.margin), 'Margin %': r2(r.marginPct), Jobs: r.jobs, Vehicles: r.units }, extra ? extra(r) : {}); }); };
+  add('Clients', grp(R.clients, function (r) { return { Country: r.country }; })); add('Countries', grp(R.countries, function (r) { return { Clients: r.clientCount }; }));
+  add('Suppliers', grp(R.suppliers, function (r) { return { 'Purchases USD': r2(r.purchases) }; })); add('Models', grp(R.models, function (r) { return { 'Cost USD': r2(r.cost), 'Margin per vehicle USD': r.marginPerUnit }; }));
+  add('Brands', grp(R.brands)); add('Months', grp(R.months));
+  DL.save({ filename: 'TKX_Sales_Report_' + today() + '.xlsx', data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) })
+    .then(function (r) { if (r && r.status === 'saved') toast('Report saved'); }, function (e) { if (e && e.code !== 'declined') toast('Export failed: ' + (e.message || e.code)); });
+}
+</script>
+</body></html>
