@@ -67,16 +67,17 @@ nav.bottom{display:none}
   .hide-m{display:none}
 }
 
-</style></head><body>
+
+body.verify-mode header.top nav, body.verify-mode nav.bottom, body.verify-mode #who {display:none}</style></head><body>
 <div id="loading"></div><div style="background:#FAEEDA;color:#854F0B;font-size:12px;padding:6px 14px;text-align:center">Demo — fictitious data kept in this browser only · Claude document reading is off in the demo · <a href="#" onclick="resetDemo();return false" style="color:#854F0B;text-decoration:underline">Reset demo data</a></div>
 <header class="top"><span class="brand">TKX Export Jobs</span>
 <nav class="main"><a href="#dashboard" data-v="dashboard">Dashboard</a><a href="#jobs" data-v="jobs">Jobs</a><a href="#payments" data-v="payments">Payments</a><a href="#report" data-v="report">Report</a><a href="#schedule" data-v="schedule">Schedule</a>
-<a href="#alerts" data-v="alerts">Alerts</a><a href="#quotes" data-v="quotes">Quotes</a><a href="#settings" data-v="settings">Settings</a></nav><span class="user" id="who"></span></header>
+<a href="#alerts" data-v="alerts">Alerts</a><a href="#quotes" data-v="quotes">Quotes</a><a href="#seal" data-v="seal">Seal</a><a href="#settings" data-v="settings">Settings</a></nav><span class="user" id="who"></span></header>
 <main id="app"><div class="empty">Loading…</div></main>
 <nav class="bottom"><a href="#dashboard" data-v="dashboard"><span class="ic">▦</span>Home</a><a href="#jobs" data-v="jobs"><span class="ic">☰</span>Jobs</a>
-<a href="#report" data-v="report"><span class="ic">▤</span>Report</a><a href="#alerts" data-v="alerts"><span class="ic">!</span>Alerts</a></nav>
+<a href="#report" data-v="report"><span class="ic">▤</span>Report</a><a href="#seal" data-v="seal"><span class="ic">◈</span>Seal</a><a href="#alerts" data-v="alerts"><span class="ic">!</span>Alerts</a></nav>
 <div id="modal"><div class="box" id="modalBox"></div></div><div id="toast"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
 <script src="seed.js"></script><script src="demo_claude.js"></script>
 <script>/* logic_en.js — pure business logic (no I/O). Dates are 'YYYY-MM-DD' strings; reporting currency USD. */
 
@@ -504,9 +505,9 @@ if (typeof module !== 'undefined') module.exports = { swParse: swParse, swNormDa
 </script><script>/* TKX Export Jobs — front end running on Claude-hosted storage (db, assets, user, sample, downloads). */
 var DB = null, USER = null, ASSETS = null, SAMPLE = null, DL = null, ME = null;
 var CAN_WRITE = true, CAN_EDIT = false;
-var S = { jobs: [], commitments: [], transactions: [], documents: [], quotes: [], settings: null };
+var S = { jobs: [], commitments: [], transactions: [], documents: [], quotes: [], sealed: [], settings: null };
 var LOADED = {}, CACHE = {};
-var COLLS = ['jobs', 'commitments', 'transactions', 'documents', 'quotes'];
+var COLLS = ['jobs', 'commitments', 'transactions', 'documents', 'quotes', 'sealed'];
 var DOC_TYPES = ['Supplier PFI', 'Sales invoice', 'Freight invoice', 'BL', 'BIETC', 'Inspection', 'Certificate of origin', 'Packing list', 'Other'];
 var DEFAULT_DOCS = ['Supplier PFI', 'Sales invoice', 'Freight invoice', 'BL', 'BIETC', 'Inspection'];
 var CURRENCIES = ['USD', 'AED', 'EUR', 'CNY', 'JPY', 'KRW', 'GBP', 'INR', 'XOF', 'XAF', 'CHF', 'SAR'];
@@ -594,7 +595,8 @@ document.addEventListener('focusout', function () { if (pendingRender) { pending
 
 function route(keepScroll) {
   var h = location.hash.replace(/^#/, '') || 'dashboard';
-  var v = h.indexOf('job-') === 0 ? 'job' : h;
+  var v = h.indexOf('job-') === 0 ? 'job' : h.indexOf('verify-') === 0 ? 'verify' : h;
+  document.body.classList.toggle('verify-mode', v === 'verify');
   document.querySelectorAll('nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.v === (v === 'job' ? 'jobs' : v)); });
   if (!keepScroll) window.scrollTo(0, 0);
   if (!allLoaded()) { $('app').innerHTML = '<div class="empty">Loading data…</div>'; return; }
@@ -602,7 +604,8 @@ function route(keepScroll) {
     var id = h.slice(4), j = S.jobs.filter(function (x) { return jobHash(x.jobId) === 'job-' + id; })[0];
     return j ? viewJob(j.jobId) : viewMissing();
   }
-  ({ dashboard: viewDash, jobs: viewJobs, payments: viewPayments, report: viewReport, schedule: viewSchedule, alerts: viewAlerts, quotes: viewQuotes, settings: viewSettings }[v] || viewDash)();
+  if (v === 'verify') return viewVerify(h.slice(7));
+  ({ dashboard: viewDash, jobs: viewJobs, payments: viewPayments, report: viewReport, schedule: viewSchedule, alerts: viewAlerts, quotes: viewQuotes, seal: viewSeal, settings: viewSettings }[v] || viewDash)();
 }
 window.addEventListener('hashchange', function () { closeModal(); route(); });
 function allLoaded() { return COLLS.every(function (c) { return LOADED[c]; }) && LOADED.settings; }
@@ -1233,7 +1236,14 @@ function viewSettings() {
     '<div class="grid g2"><div class="card"><h2>Default FX rates</h2><p class="hint">Units of currency per 1 USD, used to prefill forms. Always enter the actual bank rate on each receipt or payment.</p><table class="t">' + rates + '</table></div>' +
     '<div class="card"><h2>Documents required by country</h2><p class="hint">Used when a job is created. A country not listed gets every document as expected.</p><table class="t" id="cdTab"><thead><tr><th>Country</th><th>BIETC</th><th>Inspection</th><th>Inspection body</th></tr></thead><tbody>' + cd + '</tbody></table>' +
     '<h2 style="margin-top:14px">Our company names</h2><p class="hint">Comma-separated; used to tell receipts from payments on payment advices.</p><input id="ownNames" value="' + esc(s.ownNames) + '"' + dis + '></div></div>' +
+    companyCard(dis) +
     (CAN_EDIT ? '<div class="row"><span class="sp"></span><button class="pri" onclick="saveSettings()">Save settings</button></div>' : ''));
+}
+var CO_FIELDS = [['name', 'Company name'], ['address', 'Address'], ['email', 'Email'], ['phone', 'Phone'], ['beneficiary', 'Beneficiary name'], ['bankName', 'Bank'], ['iban', 'Account / IBAN'], ['swift', 'SWIFT / BIC'], ['bankCcy', 'Account currency'], ['verifyBase', 'Public verification address (optional)']];
+function companyCard(dis) {
+  var c = (S.settings && S.settings.company) || {};
+  return '<div class="card"><h2>Company and bank details (seal and verification page)</h2><p class="hint">Shown on statements of account and on every verification page reached by the QR code. Change them only through this screen.</p><div class="grid g2">' +
+    CO_FIELDS.map(function (f) { return '<label class="f">' + f[1] + '<input class="co" data-k="' + f[0] + '" value="' + esc(c[f[0]] || '') + '"' + dis + '></label>'; }).join('') + '</div></div>';
 }
 function countryRow(c) {
   var sel = function (cls, v) { return '<select class="' + cls + '"' + (CAN_EDIT ? '' : ' disabled') + '><option' + (v !== 'No' ? ' selected' : '') + '>Yes</option><option' + (v === 'No' ? ' selected' : '') + '>No</option></select>'; };
@@ -1246,7 +1256,7 @@ function saveSettings() {
   var cds = Array.prototype.map.call(document.querySelectorAll('.cdr'), function (r) {
     return { country: r.querySelector('.cc').value.trim().toUpperCase(), bietc: r.querySelector('.cb').value, inspection: r.querySelector('.ci').value, body: r.querySelector('.cbody').value.trim() };
   }).filter(function (c) { return c.country; });
-  DB.doc('settings/main').set({ rules: rules, rates: rates, countryDocs: cds, ownNames: $('ownNames').value }).then(function () { toast('Settings saved'); }, function (e) { toast('Error: ' + e.message); });
+  DB.doc('settings/main').set({ rules: rules, rates: rates, countryDocs: cds, ownNames: $('ownNames').value, company: (function () { var c = {}; document.querySelectorAll('.co').forEach(function (el) { c[el.dataset.k] = el.value.trim(); }); return c; })() }).then(function () { toast('Settings saved'); }, function (e) { toast('Error: ' + e.message); });
 }
 function exportXlsx() {
   var d = computed(), wb = XLSX.utils.book_new();
@@ -1425,6 +1435,299 @@ function exportReport() {
   add('Brands', grp(R.brands)); add('Months', grp(R.months));
   DL.save({ filename: 'TKX_Sales_Report_' + today() + '.xlsx', data: new Blob([XLSX.write(wb, { bookType: 'xlsx', type: 'array' })]) })
     .then(function (r) { if (r && r.status === 'saved') toast('Report saved'); }, function (e) { if (e && e.code !== 'declined') toast('Export failed: ' + (e.message || e.code)); });
+}
+</script><script>/* seal.js — QR seal for outgoing documents (sales PFI, statements of account), sealed-documents register, public verification view. */
+var SEAL_TYPES = ['Sales PFI', 'Commercial invoice', 'Packing list', 'Statement of account', 'Other'];
+var IS_DEMO = !!window.__demoFileUrl;
+
+function company() {
+  var c = (S.settings && S.settings.company) || {};
+  return { name: c.name || 'Your company', address: c.address || '', email: c.email || '', phone: c.phone || '', bankName: c.bankName || '', beneficiary: c.beneficiary || c.name || '',
+    iban: c.iban || '', swift: c.swift || '', bankCcy: c.bankCcy || 'USD', verifyBase: c.verifyBase || '' };
+}
+
+/* ---------- hashing ---------- */
+function sha256Hex(bytes) {
+  if (window.crypto && crypto.subtle && crypto.subtle.digest) {
+    return crypto.subtle.digest('SHA-256', bytes).then(function (h) { return hexOf(new Uint8Array(h)); }).catch(function () { return sha256Js(bytes); });
+  }
+  return Promise.resolve(sha256Js(bytes));
+}
+function hexOf(a) { return Array.prototype.map.call(a, function (b) { return ('0' + b.toString(16)).slice(-2); }).join(''); }
+function sha256Js(data) { // compact fallback for views without WebCrypto
+  data = new Uint8Array(data);
+  var K = [0x428a2f98, 0x71374491, 0xb5c0fbcf, 0xe9b5dba5, 0x3956c25b, 0x59f111f1, 0x923f82a4, 0xab1c5ed5, 0xd807aa98, 0x12835b01, 0x243185be, 0x550c7dc3, 0x72be5d74, 0x80deb1fe, 0x9bdc06a7, 0xc19bf174,
+    0xe49b69c1, 0xefbe4786, 0x0fc19dc6, 0x240ca1cc, 0x2de92c6f, 0x4a7484aa, 0x5cb0a9dc, 0x76f988da, 0x983e5152, 0xa831c66d, 0xb00327c8, 0xbf597fc7, 0xc6e00bf3, 0xd5a79147, 0x06ca6351, 0x14292967,
+    0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85, 0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
+    0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3, 0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2];
+  var H = [0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19];
+  var l = data.length, withPad = ((l + 9 + 63) >> 6) << 6, m = new Uint8Array(withPad); m.set(data); m[l] = 0x80;
+  var bits = l * 8; for (var i = 0; i < 8; i++) m[withPad - 1 - i] = (bits / Math.pow(2, 8 * i)) & 0xff;
+  var w = new Array(64), r = function (x, n) { return (x >>> n) | (x << (32 - n)); };
+  for (var o = 0; o < withPad; o += 64) {
+    for (var t = 0; t < 16; t++) w[t] = (m[o + 4 * t] << 24) | (m[o + 4 * t + 1] << 16) | (m[o + 4 * t + 2] << 8) | m[o + 4 * t + 3];
+    for (t = 16; t < 64; t++) { var s0 = r(w[t - 15], 7) ^ r(w[t - 15], 18) ^ (w[t - 15] >>> 3), s1 = r(w[t - 2], 17) ^ r(w[t - 2], 19) ^ (w[t - 2] >>> 10); w[t] = (w[t - 16] + s0 + w[t - 7] + s1) | 0; }
+    var a = H[0], b = H[1], c = H[2], d = H[3], e = H[4], f = H[5], g = H[6], h = H[7];
+    for (t = 0; t < 64; t++) {
+      var S1 = r(e, 6) ^ r(e, 11) ^ r(e, 25), ch = (e & f) ^ (~e & g), t1 = (h + S1 + ch + K[t] + w[t]) | 0;
+      var S0 = r(a, 2) ^ r(a, 13) ^ r(a, 22), mj = (a & b) ^ (a & c) ^ (b & c), t2 = (S0 + mj) | 0;
+      h = g; g = f; f = e; e = (d + t1) | 0; d = c; c = b; b = a; a = (t1 + t2) | 0;
+    }
+    H[0] = (H[0] + a) | 0; H[1] = (H[1] + b) | 0; H[2] = (H[2] + c) | 0; H[3] = (H[3] + d) | 0; H[4] = (H[4] + e) | 0; H[5] = (H[5] + f) | 0; H[6] = (H[6] + g) | 0; H[7] = (H[7] + h) | 0;
+  }
+  return H.map(function (x) { return ('0000000' + (x >>> 0).toString(16)).slice(-8); }).join('');
+}
+
+/* ---------- codes, links, QR ---------- */
+function newSealCode() { var a = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', s = ''; for (var i = 0; i < 8; i++) s += a[Math.floor(Math.random() * a.length)]; return 'TKX' + s; }
+function b64url(str) { return btoa(unescape(encodeURIComponent(str))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+function unb64url(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while (s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
+function verifyUrl(rec) {
+  var base = company().verifyBase || location.href.split('#')[0];
+  var url = base + '#verify-' + rec.code;
+  if (IS_DEMO) url += '~' + b64url(JSON.stringify({ t: rec.type, n: rec.docNo, d: rec.docDate, c: rec.client, a: rec.amount, y: rec.ccy, i: rec.issuedOn, h: rec.sha256 ? rec.sha256.slice(0, 16) : '' }));
+  return url;
+}
+function qrMatrix(text) { var q = qrcode(0, 'M'); q.addData(text); q.make(); var n = q.getModuleCount(), m = []; for (var r = 0; r < n; r++) { m.push([]); for (var c = 0; c < n; c++) m[r].push(q.isDark(r, c)); } return m; }
+function winAnsi(s) { return String(s === undefined || s === null ? '' : s).replace(/[‐-―]/g, '-').replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[^\x20-\x7E\xA0-\xFF]/g, '?'); }
+
+/** Stamp a QR seal on a PDF (or an image turned into a PDF). Returns Uint8Array. */
+function stampPdf(srcBytes, isImage, imgType, rec, url, opts) {
+  var L = PDFLib, doc;
+  var load = isImage ? L.PDFDocument.create().then(function (d) {
+    doc = d;
+    return (imgType === 'png' ? d.embedPng(srcBytes) : d.embedJpg(srcBytes)).then(function (img) {
+      var W = 595, Hh = 842, sc = Math.min((W - 40) / img.width, (Hh - 40) / img.height, 1), p = d.addPage([W, Hh]);
+      p.drawImage(img, { x: (W - img.width * sc) / 2, y: Hh - 20 - img.height * sc, width: img.width * sc, height: img.height * sc });
+    });
+  }) : L.PDFDocument.load(srcBytes, { ignoreEncryption: true }).then(function (d) { doc = d; });
+  return load.then(function () { return doc.embedFont(L.StandardFonts.Helvetica); }).then(function (font) {
+    return doc.embedFont(L.StandardFonts.HelveticaBold).then(function (bold) {
+      var pages = doc.getPages(), targets = opts.allPages ? pages : [pages[0]], mtx = qrMatrix(url), n = mtx.length;
+      targets.forEach(function (page) {
+        var size = page.getSize(), qr = 62, box = { w: 200, h: qr + 12 }, m = 14;
+        var pos = opts.position || 'bottom-right';
+        var x = pos.indexOf('left') > -1 ? m : size.width - box.w - m, y = pos.indexOf('top') > -1 ? size.height - box.h - m : m;
+        page.drawRectangle({ x: x, y: y, width: box.w, height: box.h, color: L.rgb(1, 1, 1), borderColor: L.rgb(0.12, 0.12, 0.11), borderWidth: 0.8, opacity: 0.97 });
+        var cell = qr / n, qx = x + 6, qy = y + 6;
+        for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (mtx[r][c]) page.drawRectangle({ x: qx + c * cell, y: qy + (n - 1 - r) * cell, width: cell + 0.05, height: cell + 0.05, color: L.rgb(0, 0, 0) });
+        var tx = qx + qr + 7, ty = y + box.h - 14;
+        page.drawText('SCAN TO VERIFY', { x: tx, y: ty, size: 7.5, font: bold, color: L.rgb(0.12, 0.12, 0.11) });
+        page.drawText(winAnsi(rec.code), { x: tx, y: ty - 12, size: 9, font: bold, color: L.rgb(0.09, 0.37, 0.65) });
+        page.drawText(winAnsi(company().name).slice(0, 30), { x: tx, y: ty - 24, size: 7, font: font, color: L.rgb(0.3, 0.3, 0.3) });
+        page.drawText(winAnsi(rec.type + ' ' + (rec.docNo || '')).slice(0, 32), { x: tx, y: ty - 34, size: 7, font: font, color: L.rgb(0.3, 0.3, 0.3) });
+        page.drawText('Sealed ' + rec.issuedOn, { x: tx, y: ty - 44, size: 7, font: font, color: L.rgb(0.3, 0.3, 0.3) });
+      });
+      doc.setSubject('Sealed ' + rec.type + ' ' + rec.code);
+      return doc.save();
+    });
+  });
+}
+
+/* ---------- seal page ---------- */
+var SEAL_PENDING = null;
+function viewSeal() {
+  var rows = S.sealed.slice().sort(function (a, b) { return (b.issuedOn || '') + b.code < (a.issuedOn || '') + a.code ? -1 : 1; });
+  var clients = {}; S.jobs.forEach(function (j) { if (j.client && CLOSED_STATUSES.indexOf(j.status) < 0 || j.client) clients[String(j.client).trim()] = 1; });
+  var libsOk = window.PDFLib && window.qrcode;
+  app('<div class="row"><div><h1>Seal documents</h1><p class="sub">Stamp a QR seal on outgoing documents. The QR opens a verification page with the official data and our bank details, so a client can spot a forged PFI or a changed bank account.</p></div></div>' +
+    (libsOk ? '' : '<div class="alert danger" style="cursor:default"><div>The PDF tools could not load. Check the connection and reload.</div></div>') +
+    (company().iban ? '' : '<div class="alert warning" onclick="go(\'settings\')"><div><b>Company and bank details are missing</b><br>Fill them in Settings: they are shown on every verification page.</div></div>') +
+    '<div class="grid g2"><div class="card"><h2>Seal a sales PFI (Flexina / Tally) or another document</h2>' +
+    '<div id="dropZone" style="border:1.5px dashed var(--line);border-radius:12px;padding:26px 14px;text-align:center;cursor:pointer;color:var(--mut)" onclick="pickFile(sealFile,\'.pdf,.jpg,.jpeg,.png\')">' +
+    '<b style="color:var(--txt)">Drop the PDF here</b><br>or click to choose · PDF, JPG or PNG</div><p class="hint" style="margin:8px 0 0">The app reads the document' + (SAMPLE ? ' with Claude' : '') + ', proposes the job and the amounts, then produces the sealed copy to send.</p></div>' +
+    '<div class="card"><h2>Statement of account</h2><p class="hint">Jobs, receipts, credits and balance due for one client, with our bank details and a QR seal.</p>' +
+    '<label class="f">Client<select id="soaClient">' + Object.keys(clients).sort().map(function (c) { return '<option>' + esc(c) + '</option>'; }).join('') + '</select></label>' +
+    '<label class="f">As of<input id="soaDate" type="date" value="' + today() + '"></label><label class="f"><input type="checkbox" id="soaOpen" checked style="width:auto"> Open jobs only (exclude fully settled jobs)</label>' +
+    '<button class="pri" onclick="makeStatement()"' + (libsOk ? '' : ' disabled') + '>Generate and seal</button></div></div>' +
+    '<div class="card"><h2>Sealed documents register</h2>' + (rows.length ? '<table class="t resp"><thead><tr><th>Code</th><th>Type</th><th>Doc no.</th><th>Client</th><th>Job</th><th class="num">Amount</th><th>Sealed</th><th>Status</th><th></th></tr></thead><tbody>' + rows.map(function (r) {
+      var st = r.status === 'revoked' ? pill('danger', 'revoked') : r.status === 'replaced' ? pill('warning', 'replaced') : pill('ok', 'valid');
+      return '<tr><td data-l="Code"><b>' + esc(r.code) + '</b></td><td data-l="Type">' + esc(r.type) + '</td><td data-l="Doc no.">' + esc(r.docNo) + '</td><td data-l="Client">' + esc(r.client) + '</td>' +
+        '<td data-l="Job">' + (r.jobId ? '<a href="#' + jobHash(r.jobId) + '">' + esc(r.jobId) + '</a>' : '—') + '</td><td data-l="Amount" class="num">' + (r.amount !== '' && r.amount !== undefined ? fmt(r.amount, 2) + ' ' + esc(r.ccy) : '—') + '</td>' +
+        '<td data-l="Sealed">' + fmtD(r.issuedOn) + '</td><td data-l="Status">' + st + '</td><td data-l="">' + (r.fileId ? '<a target="_blank" href="' + fileUrl(r.fileId) + '">File</a> ' : '') +
+        '<button class="link" onclick="go(\'verify-' + r.code + '\')">Verify page</button> <button class="link" onclick="copyVerify(\'' + r.id + '\')">Copy link</button>' +
+        (CAN_EDIT && r.status !== 'revoked' ? ' <button class="link" onclick="revokeSeal(\'' + r.id + '\')">Revoke</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody></table>' : '<div class="empty">No sealed document yet.</div>') + '</div>');
+  var dz = $('dropZone');
+  if (dz) {
+    dz.addEventListener('dragover', function (e) { e.preventDefault(); dz.style.background = 'var(--soft)'; });
+    dz.addEventListener('dragleave', function () { dz.style.background = ''; });
+    dz.addEventListener('drop', function (e) { e.preventDefault(); dz.style.background = ''; if (e.dataTransfer.files[0]) sealFile(e.dataTransfer.files[0]); });
+  }
+}
+function copyVerify(id) {
+  var r = find(S.sealed, id), url = verifyUrl(r);
+  try { navigator.clipboard.writeText(url).then(function () { toast('Verification link copied'); }, function () { showLink(url); }); } catch (e) { showLink(url); }
+}
+function showLink(url) { openModal('<h2>Verification link</h2><input value="' + esc(url) + '" onclick="this.select()"><div class="row" style="margin-top:10px"><span class="sp"></span><button onclick="closeModal()">Close</button></div>'); }
+function revokeSeal(id) {
+  var r = find(S.sealed, id);
+  var others = S.sealed.filter(function (x) { return x.id !== id && x.status !== 'revoked'; });
+  openModal('<h2>Revoke ' + esc(r.code) + '</h2><p class="hint">The verification page will show this document as no longer valid.</p><label class="f">Replaced by (optional)<select id="rvBy"><option value="">— not replaced —</option>' +
+    others.map(function (x) { return '<option value="' + esc(x.code) + '">' + esc(x.code + ' · ' + x.type + ' ' + (x.docNo || '')) + '</option>'; }).join('') + '</select></label>' +
+    '<div class="row"><span class="sp"></span><button onclick="closeModal()">Cancel</button><button class="pri" id="rvGo">Revoke</button></div>');
+  $('rvGo').onclick = function () { var by = $('rvBy').value; put('sealed', Object.assign({}, r, { status: by ? 'replaced' : 'revoked', replacedBy: by, revokedOn: today() })).then(function () { closeModal(); toast('Seal updated'); }); };
+}
+
+/** A dropped document: read it, propose fields, then seal. */
+function sealFile(file) {
+  if (!/pdf|jpe?g|png/i.test(file.type + file.name)) { toast('Use a PDF, JPG or PNG file.'); return; }
+  toast('Reading the document…');
+  Promise.all([file.arrayBuffer(), fileText(file)]).then(function (res) {
+    var bytes = res[0], text = res[1], sug = lgSuggestJob(text, S.jobs), j = sug.length ? S.jobs.filter(function (x) { return x.jobId === sug[0].jobId; })[0] : null;
+    var pre = { type: 'Sales PFI', jobId: j ? j.jobId : '', docNo: j ? j.salesPfi : '', docDate: j ? j.pfiDate : today(), client: j ? j.client : '', amount: j ? j.saleAmount : '', docCcy: j ? j.saleCcy : 'USD' };
+    var ai = SAMPLE ? aiRead('job', file, text).then(function (r) {
+      r = r || {};
+      if (r.salesPfi) pre.docNo = r.salesPfi; if (r.pfiDate) pre.docDate = r.pfiDate; if (r.client) pre.client = r.client;
+      if (r.amount) pre.amount = Number(r.amount); if (r.currency) pre.docCcy = r.currency;
+      if (!pre.jobId && r.salesPfi) { var s2 = lgSuggestJob(r.salesPfi, S.jobs); if (s2.length) pre.jobId = s2[0].jobId; }
+    }).catch(function () {}) : Promise.resolve();
+    return ai.then(function () { SEAL_PENDING = { file: file, bytes: bytes }; sealForm(pre); });
+  });
+}
+function sealForm(pre) {
+  var fields = [
+    { k: 'type', l: 'Document type', t: 'select', o: SEAL_TYPES, req: 1 }, { k: 'jobId', l: 'Job', t: 'select', o: [['', '— none —']].concat(S.jobs.map(function (j) { return [j.jobId, j.jobId + ' · ' + j.salesPfi + ' · ' + j.client]; })) },
+    { k: 'docNo', l: 'Document number', req: 1 }, { k: 'docDate', l: 'Document date', t: 'date' }, { k: 'client', l: 'Client', req: 1 },
+    { k: 'docCcy', l: 'Currency', t: 'select', o: CURRENCIES }, { k: 'amount', l: 'Amount (as on the document)', t: 'number' },
+    { k: 'position', l: 'Seal position', t: 'select', o: [['bottom-right', 'Bottom right'], ['bottom-left', 'Bottom left'], ['top-right', 'Top right'], ['top-left', 'Top left']] },
+    { k: 'allPages', l: 'Seal every page', t: 'check' }];
+  form('Seal document', fields, Object.assign({ position: 'bottom-right', allPages: false }, pre), function (o) {
+    var f = SEAL_PENDING.file, isImg = /image\//.test(f.type) || /\.(jpe?g|png)$/i.test(f.name);
+    return sealAndSave(new Uint8Array(SEAL_PENDING.bytes), isImg, /png/i.test(f.type + f.name) ? 'png' : 'jpg', o, f.name.replace(/\.(pdf|jpe?g|png)$/i, '') + '_sealed.pdf');
+  }, { top: '<p class="hint" style="margin-top:8px">Check the data: it is what the verification page will display. The sealed copy downloads after saving; send that copy to the client.</p>' });
+}
+function sealAndSave(bytes, isImg, imgType, o, filename) {
+  var rec = { code: newSealCode(), type: o.type, jobId: o.jobId || '', docNo: o.docNo, docDate: o.docDate || '', client: o.client, amount: o.amount === '' ? '' : Number(o.amount), ccy: o.docCcy || o.ccy || 'USD',
+    issuedOn: today(), issuedBy: ME ? ME.id : '', status: 'valid' };
+  rec.id = rec.code;
+  return stampPdf(bytes, isImg, imgType, rec, verifyUrl(rec), { position: o.position, allPages: !!o.allPages }).then(function (out) {
+    return sha256Hex(out).then(function (h) {
+      rec.sha256 = h;
+      var blob = new Blob([out], { type: 'application/pdf' });
+      var up = ASSETS ? ASSETS.upload(new File([blob], filename, { type: 'application/pdf' })).then(function (a) { rec.fileId = a.id; }).catch(function () {}) : Promise.resolve();
+      return up.then(function () { return put('sealed', rec); }).then(function () {
+        if (rec.type === 'Sales PFI' && rec.jobId) { var j = S.jobs.filter(function (x) { return x.jobId === rec.jobId; })[0]; if (j) put('jobs', Object.assign({}, j, { sealCode: rec.code })); }
+        if (DL) DL.save({ filename: filename, data: blob }).catch(function () {});
+        setTimeout(function () { toast('Sealed: ' + rec.code); }, 300);
+      });
+    });
+  });
+}
+
+/* ---------- statement of account ---------- */
+function statementData(client, asOf, openOnly) {
+  var key = String(client).trim().toUpperCase(), d = computed();
+  var jobs = S.jobs.filter(function (j) { return String(j.client || '').trim().toUpperCase() === key && j.status !== 'Cancelled' && (!j.pfiDate || j.pfiDate <= asOf); });
+  var sums = {}; d.summaries.forEach(function (s) { sums[s.jobId] = s; });
+  var ex = lgExpandTx(S.transactions).filter(function (t) { return t.dir === 'IN' && (!t.date || t.date <= asOf); });
+  var rows = jobs.map(function (j) {
+    var rec = ex.filter(function (t) { return t.jobId === j.jobId; }).reduce(function (a, t) { return a + lgToUSD(t.amount, t.ccy, t.rate); }, 0);
+    var sale = sums[j.jobId] ? sums[j.jobId].saleUSD : lgToUSD(j.saleAmount, j.saleCcy, j.saleRate);
+    return { jobId: j.jobId, pfi: j.salesPfi, date: j.pfiDate, etd: j.etd, sale: lgRound(sale), received: lgRound(rec), balance: lgRound(sale - rec), due: sums[j.jobId] ? sums[j.jobId].deadlines.client : '' };
+  }).filter(function (r) { return !openOnly || Math.abs(r.balance) >= 1; }).sort(function (a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
+  var receipts = ex.filter(function (t) { return rows.some(function (r) { return r.jobId === t.jobId; }); }).map(function (t) { return { date: t.date, ref: t.reference || '', jobId: t.jobId, usd: lgRound(lgToUSD(t.amount, t.ccy, t.rate)) }; })
+    .sort(function (a, b) { return (a.date || '') < (b.date || '') ? -1 : 1; });
+  var words0 = words(client);
+  var credits = S.transactions.filter(function (t) { return t.dir === 'IN' && lgUnallocated(t) > 0.009 && (!t.date || t.date <= asOf) && words(t.counterparty).some(function (w) { return words0.indexOf(w) > -1; }); })
+    .map(function (t) { return { date: t.date, ref: t.reference || '', usd: lgRound(lgToUSD(lgUnallocated(t), t.ccy, t.rate)) }; });
+  var tot = { sale: 0, received: 0, balance: 0, credit: 0 };
+  rows.forEach(function (r) { tot.sale += r.sale; tot.received += r.received; tot.balance += r.balance; });
+  credits.forEach(function (c) { tot.credit += c.usd; });
+  tot.net = lgRound(tot.balance - tot.credit);
+  return { client: client, asOf: asOf, rows: rows, receipts: receipts, credits: credits, tot: tot };
+}
+function buildStatementPdf(D) {
+  var L = PDFLib, co = company();
+  return L.PDFDocument.create().then(function (doc) {
+    return Promise.all([doc.embedFont(L.StandardFonts.Helvetica), doc.embedFont(L.StandardFonts.HelveticaBold)]).then(function (f) {
+      var font = f[0], bold = f[1], W = 595, H = 842, M = 40, page, y;
+      var grey = L.rgb(0.42, 0.42, 0.4), dark = L.rgb(0.12, 0.12, 0.11);
+      var txt = function (s, x, size, b, color, align, width) {
+        s = winAnsi(s); var fnt = b ? bold : font, w = fnt.widthOfTextAtSize(s, size);
+        page.drawText(s, { x: align === 'right' ? x + (width || 0) - w : x, y: y, size: size, font: fnt, color: color || dark });
+      };
+      var newPage = function () { page = doc.addPage([W, H]); y = H - M; };
+      var need = function (h) { if (y - h < M + 110) { newPage(); } };
+      var money = function (n) { return fmt(n, 2); };
+      newPage();
+      txt(co.name, M, 15, true); y -= 14; if (co.address) { txt(co.address, M, 8.5, false, grey); y -= 11; }
+      if (co.email || co.phone) { txt([co.email, co.phone].filter(String).join(' · '), M, 8.5, false, grey); y -= 11; }
+      y -= 14; txt('STATEMENT OF ACCOUNT', M, 13, true); y -= 18;
+      txt('Client: ' + D.client, M, 10, true); txt('As of ' + fmtD(D.asOf).replace(/&[^;]+;/g, ''), M, 10, false, grey, 'right', W - 2 * M); y -= 13;
+      txt('Amounts in USD (reporting currency)', M, 8.5, false, grey); y -= 20;
+      var cols = [M, M + 86, M + 186, M + 252, M + 318, M + 398, M + 472], widths = [80, 96, 60, 60, 74, 70, 43];
+      var header = ['Job', 'Sales PFI', 'PFI date', 'Due', 'Amount', 'Received', 'Balance'];
+      var row = function (vals, b) { vals.forEach(function (v, i) { txt(v, cols[i], 8.5, b, dark, i >= 4 ? 'right' : '', i >= 4 ? (i === 6 ? W - M - cols[6] : widths[i]) : 0); }); };
+      var line = function () { page.drawLine({ start: { x: M, y: y + 9 }, end: { x: W - M, y: y + 9 }, thickness: 0.5, color: L.rgb(0.85, 0.84, 0.8) }); };
+      row(header, true); y -= 5; page.drawLine({ start: { x: M, y: y }, end: { x: W - M, y: y }, thickness: 0.5, color: L.rgb(0.85, 0.84, 0.8) }); y -= 13;
+      D.rows.forEach(function (r) { need(14); row([r.jobId, r.pfi || '', r.date || '', r.due || '', money(r.sale), money(r.received), money(r.balance)]); y -= 13; });
+      if (!D.rows.length) { txt('No open jobs.', M, 9, false, grey); y -= 13; }
+      line(); y -= 4; row(['Total', '', '', '', money(D.tot.sale), money(D.tot.received), money(D.tot.balance)], true); y -= 22;
+      if (D.receipts.length) {
+        need(30); txt('Receipts applied', M, 10, true); y -= 14;
+        D.receipts.forEach(function (r) { need(13); txt(r.date || '', M, 8.5); txt(r.ref, M + 86, 8.5); txt(r.jobId, M + 252, 8.5); txt(money(r.usd), M + 398, 8.5, false, dark, 'right', W - M - (M + 398)); y -= 12; });
+        y -= 10;
+      }
+      if (D.credits.length) {
+        need(30); txt('Unallocated payments (credit on account)', M, 10, true); y -= 14;
+        D.credits.forEach(function (c) { need(13); txt(c.date || '', M, 8.5); txt(c.ref, M + 86, 8.5); txt('-' + money(c.usd), M + 398, 8.5, false, dark, 'right', W - M - (M + 398)); y -= 12; });
+        y -= 10;
+      }
+      need(40); page.drawRectangle({ x: M, y: y - 8, width: W - 2 * M, height: 26, color: L.rgb(0.95, 0.94, 0.91) });
+      txt(D.tot.net < 0 ? 'CREDIT BALANCE IN YOUR FAVOUR' : 'NET BALANCE DUE', M + 10, 11, true); txt('USD ' + money(Math.abs(D.tot.net)), M, 11, true, dark, 'right', W - 2 * M - 10); y -= 40;
+      need(80); txt('Payment details (verify by scanning the QR code before paying)', M, 9.5, true); y -= 14;
+      [['Beneficiary', co.beneficiary], ['Bank', co.bankName], ['Account / IBAN', co.iban], ['SWIFT / BIC', co.swift], ['Account currency', co.bankCcy]].forEach(function (p) {
+        if (!p[1]) return; txt(p[0], M, 8.5, false, grey); txt(p[1], M + 110, 8.5, true); y -= 12;
+      });
+      y -= 8; txt('Our bank details never change by email. Always check them on the verification page.', M, 7.5, false, grey);
+      var pages = doc.getPages();
+      pages.forEach(function (p, i) { p.drawText(winAnsi('Page ' + (i + 1) + ' of ' + pages.length), { x: M, y: 22, size: 7.5, font: font, color: grey }); });
+      return doc.save();
+    });
+  });
+}
+function slug(s) { return String(s || '').trim().replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toUpperCase().slice(0, 24) || 'CLIENT'; }
+function makeStatement() {
+  var client = $('soaClient').value, asOf = $('soaDate').value || today(), openOnly = $('soaOpen').checked;
+  if (!client) { toast('Choose a client.'); return; }
+  var D = statementData(client, asOf, openOnly);
+  toast('Building the statement…');
+  buildStatementPdf(D).then(function (bytes) {
+    var o = { type: 'Statement of account', jobId: '', docNo: 'SOA-' + slug(client) + '-' + asOf.replace(/-/g, ''), docDate: asOf, client: client, amount: D.tot.net, ccy: 'USD', position: 'bottom-right', allPages: true };
+    return sealAndSave(bytes, false, '', o, 'Statement_' + slug(client) + '_' + asOf + '_sealed.pdf');
+  }).catch(function (e) { toast('Statement failed: ' + (e.message || e)); });
+}
+
+/* ---------- verification view (public page in the hosted version) ---------- */
+function viewVerify(arg) {
+  var parts = String(arg).split('~'), code = parts[0], rec = S.sealed.filter(function (x) { return x.code === code; })[0], co = company(), embedded = null;
+  if (parts[1]) { try { var p = JSON.parse(unb64url(parts[1])); embedded = { type: p.t, docNo: p.n, docDate: p.d, client: p.c, amount: p.a, ccy: p.y, issuedOn: p.i }; } catch (e) {} }
+  var r = rec || embedded;
+  var st = !r ? ['danger', 'Unknown code', 'This code is not in our register. Do not rely on this document and contact us.'] :
+    rec && rec.status === 'revoked' ? ['danger', 'Revoked', 'This document was withdrawn on ' + fmtD(rec.revokedOn) + ' and is no longer valid.'] :
+    rec && rec.status === 'replaced' ? ['warning', 'Replaced', 'This document was replaced by ' + esc(rec.replacedBy) + '. Use the latest version.'] :
+    rec ? ['ok', 'Authentic document', 'This document was issued and sealed by ' + esc(co.name) + '.'] :
+    ['warning', 'Demo check', 'Demo mode: these details come from the link itself, not from a server register.'];
+  var bank = [['Beneficiary', co.beneficiary], ['Bank', co.bankName], ['Account / IBAN', co.iban], ['SWIFT / BIC', co.swift], ['Account currency', co.bankCcy]].filter(function (x) { return x[1]; });
+  var colour = { ok: 'var(--grn)', warning: 'var(--amb)', danger: 'var(--red)' }[st[0]], bg = { ok: 'var(--grn-bg)', warning: 'var(--amb-bg)', danger: 'var(--red-bg)' }[st[0]];
+  app('<div style="max-width:560px;margin:0 auto"><p class="hint" style="text-align:center;margin:6px 0 14px">Document verification · ' + esc(co.name) + '</p>' +
+    '<div class="card" style="text-align:center;background:' + bg + ';border-color:transparent"><div style="font-size:22px;font-weight:600;color:' + colour + '">' + st[1] + '</div><div style="color:' + colour + ';margin-top:4px">' + st[2] + '</div>' +
+    '<div class="hint" style="margin-top:6px">Code ' + esc(code) + '</div></div>' +
+    (r ? '<div class="card"><table class="t">' + [['Document', r.type], ['Number', r.docNo], ['Date', fmtD(r.docDate)], ['Client', r.client], ['Amount', r.amount !== '' && r.amount !== undefined ? fmt(r.amount, 2) + ' ' + esc(r.ccy) : '—'], ['Sealed on', fmtD(r.issuedOn)]]
+      .map(function (x) { return '<tr><td class="mut">' + x[0] + '</td><td style="text-align:right"><b>' + (x[0] === 'Date' || x[0] === 'Sealed on' || x[0] === 'Amount' ? x[1] : esc(x[1])) + '</b></td></tr>'; }).join('') + '</table></div>' : '') +
+    (bank.length ? '<div class="card"><h2>Our only bank account for this payment</h2><table class="t">' + bank.map(function (x) { return '<tr><td class="mut">' + x[0] + '</td><td style="text-align:right"><b>' + esc(x[1]) + '</b></td></tr>'; }).join('') +
+      '</table><p class="hint" style="margin:8px 0 0">If the bank details on your document or in an email differ from these, do not pay and call us.</p></div>' : '') +
+    (rec && rec.sha256 ? '<div class="card"><h2>Check your copy</h2><p class="hint">Drop the PDF you received: it must be byte-for-byte the sealed copy.</p><input type="file" accept=".pdf" onchange="checkCopy(this.files[0],\'' + rec.id + '\')"><div id="copyRes" style="margin-top:8px"></div></div>' : '') +
+    ((co.email || co.phone) ? '<p class="hint" style="text-align:center">Questions: ' + esc([co.email, co.phone].filter(String).join(' · ')) + '</p>' : '') + '</div>');
+}
+function checkCopy(file, id) {
+  if (!file) return;
+  var rec = find(S.sealed, id);
+  file.arrayBuffer().then(sha256Hex).then(function (h) {
+    $('copyRes').innerHTML = h === rec.sha256 ? '<div class="alert info" style="cursor:default;background:var(--grn-bg);color:var(--grn)"><div><b>Identical to the sealed copy.</b></div></div>' :
+      '<div class="alert danger" style="cursor:default"><div><b>This file differs from the sealed copy.</b> It may have been altered; do not rely on it.</div></div>';
+  });
 }
 </script>
 </body></html>

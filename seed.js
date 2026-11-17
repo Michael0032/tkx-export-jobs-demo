@@ -45,7 +45,10 @@ var SEED = (function () {
   });
   var quotes = [{ id: 'QUO-001', date: '2026-11-08', supplier: 'Supplier Y', reference: 'Q-90122', description: '8 SUVs, model year 2026', ccy: 'USD', amount: 296000, rate: 1, units: 8, lines: [{ model: 'Jetour X70 Plus', qty: 8, unitCost: 37000 }], jobId: '', status: 'Open' }];
   var settings = { rules: { CLIENT_DAYS_BEFORE_ETD: 10, SUPPLIER_DAYS_BEFORE_ETD: 0, FREIGHT_DAYS_BEFORE_ETD: 0, WARN_DAYS: 5, ETD_NOTICE_DAYS: 7, ETA_NOTICE_DAYS: 5, BL_DAYS_AFTER_ETD: 7, PRESHIP_DOC_DAYS_BEFORE_ETD: 3, DOC_SEND_DAYS: 2, TOLERANCE_USD: 50 },
-    rates: { USD: 1, AED: 3.6725, CNY: 7.12 }, ownNames: 'TKXPORT,TAWREED,VITESSE,365', countryDocs: [{ country: 'CI', bietc: 'Yes', inspection: 'Yes', body: 'Bureau Veritas' }] };
-  return { jobs: jobs, commitments: commitments, transactions: transactions, documents: documents, quotes: quotes, settings: settings };
+    rates: { USD: 1, AED: 3.6725, CNY: 7.12 }, ownNames: 'TKXPORT,TAWREED,VITESSE,365', countryDocs: [{ country: 'CI', bietc: 'Yes', inspection: 'Yes', body: 'Bureau Veritas' }],
+    company: { name: 'Demo Export Trading LLC', address: 'Office 000, Demo Tower, Dubai, UAE', email: 'accounts@demo-export.example', phone: '+971 4 000 0000', beneficiary: 'Demo Export Trading LLC',
+      bankName: 'Demo Bank PJSC (fictitious)', iban: 'AE00 0000 0000 0000 0000 000', swift: 'DEMOAEADXXX', bankCcy: 'USD', verifyBase: '' } };
+  var sealed = [];
+  return { jobs: jobs, commitments: commitments, transactions: transactions, documents: documents, quotes: quotes, sealed: sealed, settings: settings };
 })();
 if (typeof module !== 'undefined') module.exports = SEED;

@@ -1,11 +1,11 @@
 // Stand-alone demo runtime: replaces Claude's storage with this browser's localStorage. Fictitious data only.
 (function () {
-  var KEY = 'tkx-demo-store-v1', BLOBS = 'tkx-demo-blobs-v1';
+  var KEY = 'tkx-demo-store-v2', BLOBS = 'tkx-demo-blobs-v2';
   var store = null, blobs = {};
   try { store = JSON.parse(localStorage.getItem(KEY) || 'null'); blobs = JSON.parse(localStorage.getItem(BLOBS) || '{}'); } catch (e) { store = null; }
   function seed() {
     var s = {};
-    ['jobs', 'commitments', 'transactions', 'documents', 'quotes'].forEach(function (c) { SEED[c].forEach(function (r) { s[c + '/' + r.id] = JSON.parse(JSON.stringify(r)); }); });
+    ['jobs', 'commitments', 'transactions', 'documents', 'quotes', 'sealed'].forEach(function (c) { SEED[c].forEach(function (r) { s[c + '/' + r.id] = JSON.parse(JSON.stringify(r)); }); });
     s['settings/main'] = JSON.parse(JSON.stringify(SEED.settings));
     return s;
   }
