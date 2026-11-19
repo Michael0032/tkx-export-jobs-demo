@@ -68,7 +68,33 @@ nav.bottom{display:none}
 }
 
 
-body.verify-mode header.top nav, body.verify-mode nav.bottom, body.verify-mode #who {display:none}</style></head><body>
+body.verify-mode header.top nav, body.verify-mode nav.bottom, body.verify-mode #who {display:none}
+.jm-ship{padding:6px 18px 2px}.jm-track{position:relative;height:4px;background:var(--line);border-radius:2px;margin:34px 0 0}
+.jm-fill{position:absolute;left:0;top:0;bottom:0;background:var(--acc);border-radius:2px}
+.jm-stop{position:absolute;top:50%;width:12px;height:12px;margin:-6px 0 0 -6px;border-radius:50%;background:var(--card);border:2px solid var(--line)}.jm-stop.on{border-color:var(--acc);background:var(--acc)}
+.jm-boat{position:absolute;bottom:6px;transform:translateX(-50%);transition:left .6s}
+.jm-labels{position:relative;height:40px;margin-top:10px}.jm-labels div{position:absolute;transform:translateX(-50%);text-align:center;font-size:12px;color:var(--mut);white-space:nowrap}
+.jm-labels div:first-child{transform:none;text-align:left}.jm-labels div:last-child{transform:translateX(-100%);text-align:right}
+.jm-labels b{display:block;font-weight:500;color:var(--txt)}.jm-labels div.cur b{color:var(--acc)}.jm-note{font-size:12px;color:var(--mut);text-align:center;margin:2px 0 4px}
+.jm-grid{position:relative;display:grid;grid-template-columns:1fr minmax(200px,.8fr) 1fr;grid-template-areas:". rec ." "sup mid cli" ". pay .";gap:26px 34px;align-items:center;margin-bottom:14px}
+.jm-links{position:absolute;left:0;top:0;pointer-events:none;z-index:0}
+.jm-a-rec{grid-area:rec}.jm-a-sup{grid-area:sup}.jm-a-mid{grid-area:mid}.jm-a-cli{grid-area:cli}.jm-a-pay{grid-area:pay}
+.jm-a-rec,.jm-a-pay{grid-column:1/4;justify-self:center;width:min(420px,100%)}
+.jm-card{position:relative;z-index:1;background:var(--card);border:1px solid var(--line);border-top:3px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13px}
+.jm-h{display:flex;align-items:center;gap:8px;font-size:14px}.jm-ic{color:var(--mut)}.jm-sub{color:var(--mut);font-size:12px;margin-top:2px}
+.jm-dot,.jm-legend i{width:9px;height:9px;border-radius:50%;background:var(--line);display:inline-block}
+.lv-ok{border-top-color:var(--grn)}.lv-ok .jm-dot,.jm-legend .lv-ok i{background:var(--grn)}
+.lv-warning{border-top-color:#EF9F27}.lv-warning .jm-dot,.jm-legend .lv-warning i{background:#EF9F27}
+.lv-danger{border-top-color:var(--red)}.lv-danger .jm-dot,.jm-legend .lv-danger i{background:var(--red)}
+.jm-r{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--soft)}.jm-r span{color:var(--mut)}.jm-r b{font-weight:500;text-align:right;white-space:nowrap}
+.jm-r small{font-size:11px}.jm-r.due span,.jm-r.due b{color:var(--amb)}.jm-r.late span,.jm-r.late b{color:var(--red)}.jm-more{font-size:12px;color:var(--mut);padding-top:4px}
+.jm-centre{position:relative;z-index:1;text-align:center;background:var(--txt);color:#fff;border-radius:16px;padding:16px 14px;cursor:pointer}
+.jm-centre .mut{color:#bbb}.jm-id{font-size:17px;font-weight:600}.jm-units{font-size:24px;font-weight:600;margin:4px 0}.jm-models{font-size:12px;opacity:.85;line-height:1.5}
+.jm-cash{font-size:12px;margin-top:8px;opacity:.9}.jm-centre .grn{color:#97C459}.jm-centre .red{color:#F09595}
+.jm-legend{display:flex;gap:16px;justify-content:center;font-size:12px;color:var(--mut);margin-bottom:20px}.jm-legend span{display:flex;align-items:center;gap:5px}
+@media (max-width:760px){.jm-grid{grid-template-columns:1fr;grid-template-areas:"mid" "rec" "cli" "sup" "pay";gap:12px}.jm-a-rec,.jm-a-pay{grid-column:auto;width:100%}.jm-links{display:none}.jm-labels span{display:none}.jm-ship{padding:6px 8px 2px}}
+@media print{header.top,nav.bottom,.jm-top button,#toast{display:none!important}body{background:#fff}}
+</style></head><body>
 <div id="loading"></div><div style="background:#FAEEDA;color:#854F0B;font-size:12px;padding:6px 14px;text-align:center">Demo — fictitious data kept in this browser only · Claude document reading is off in the demo · <a href="#" onclick="resetDemo();return false" style="color:#854F0B;text-decoration:underline">Reset demo data</a></div>
 <header class="top"><span class="brand">TKX Export Jobs</span>
 <nav class="main"><a href="#dashboard" data-v="dashboard">Dashboard</a><a href="#jobs" data-v="jobs">Jobs</a><a href="#payments" data-v="payments">Payments</a><a href="#report" data-v="report">Report</a><a href="#schedule" data-v="schedule">Schedule</a>
@@ -595,9 +621,9 @@ document.addEventListener('focusout', function () { if (pendingRender) { pending
 
 function route(keepScroll) {
   var h = location.hash.replace(/^#/, '') || 'dashboard';
-  var v = h.indexOf('job-') === 0 ? 'job' : h.indexOf('verify-') === 0 ? 'verify' : h;
+  var v = h.indexOf('job-') === 0 ? 'job' : h.indexOf('map-') === 0 ? 'map' : h.indexOf('verify-') === 0 ? 'verify' : h;
   document.body.classList.toggle('verify-mode', v === 'verify');
-  document.querySelectorAll('nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.v === (v === 'job' ? 'jobs' : v)); });
+  document.querySelectorAll('nav a').forEach(function (a) { a.classList.toggle('on', a.dataset.v === (v === 'job' || v === 'map' ? 'jobs' : v)); });
   if (!keepScroll) window.scrollTo(0, 0);
   if (!allLoaded()) { $('app').innerHTML = '<div class="empty">Loading data…</div>'; return; }
   if (v === 'job') {
@@ -605,6 +631,7 @@ function route(keepScroll) {
     return j ? viewJob(j.jobId) : viewMissing();
   }
   if (v === 'verify') return viewVerify(h.slice(7));
+  if (v === 'map') { var mj = S.jobs.filter(function (x) { return jobHash(x.jobId) === 'job-' + h.slice(4); })[0]; return mj ? viewJobMap(mj.jobId) : viewMissing(); }
   ({ dashboard: viewDash, jobs: viewJobs, payments: viewPayments, report: viewReport, schedule: viewSchedule, alerts: viewAlerts, quotes: viewQuotes, seal: viewSeal, settings: viewSettings }[v] || viewDash)();
 }
 window.addEventListener('hashchange', function () { closeModal(); route(); });
@@ -720,7 +747,7 @@ function viewJob(id) {
   app('<div class="row"><div><a href="#jobs" class="hint">← Jobs</a><h1>' + esc(j.jobId) + ' · ' + esc(j.salesPfi) + ' ' + statusPill(s.status) + '</h1>' +
     '<p class="sub">' + esc(j.client) + (j.country ? ' · ' + esc(j.country) : '') + (j.destPort ? ' · ' + esc(j.destPort) : '') + (j.units ? ' · ' + esc(j.units) + ' vehicle(s)' : '') +
     ' · sale ' + esc(j.incoterm || '') + ' ' + fmt(j.saleAmount) + ' ' + esc(j.saleCcy) + (j.supplier ? ' · supplier ' + esc(j.supplier) : '') + (j.vessel ? ' · vessel ' + esc(j.vessel) : '') + '</p></div><span class="sp"></span>' +
-    (j.fileId ? '<a class="btn" target="_blank" href="' + fileUrl(j.fileId) + '">Sales PFI</a>' : '') + (W ? '<button onclick="editJob(\'' + j.jobId + '\')">Edit job</button>' : '') + '</div>' +
+    (j.fileId ? '<a class="btn" target="_blank" href="' + fileUrl(j.fileId) + '">Sales PFI</a>' : '') + '<button onclick="location.hash=\'' + jobHash(j.jobId).replace('job-', 'map-') + '\'">Map</button>' + (W ? '<button onclick="editJob(\'' + j.jobId + '\')">Edit job</button>' : '') + '</div>' +
     '<div class="card">' + tl + '</div>' + (alerts.length ? '<div class="card"><h2>Job alerts</h2>' + alerts.map(alertHtml).join('') + '</div>' : '') +
     '<div class="grid g4" style="margin-bottom:14px"><div class="kpi"><p>Received from client</p><b>' + fmt(s.receivedUSD) + '</b><span class="hint">of ' + fmt(s.saleUSD) + ' USD</span></div>' +
     '<div class="kpi"><p>Left to collect</p><b class="' + (s.receivableUSD && dayDiff(s.deadlines.client) < 0 ? 'red' : '') + '">' + fmt(s.receivableUSD) + '</b><span class="hint">due ' + fmtD(s.deadlines.client) + '</span></div>' +
@@ -1729,5 +1756,124 @@ function checkCopy(file, id) {
       '<div class="alert danger" style="cursor:default"><div><b>This file differs from the sealed copy.</b> It may have been altered; do not rely on it.</div></div>';
   });
 }
+</script><script>/* jobmap.js — one-page "mind map" of a job: suppliers left, client right, receipts top, payments bottom, shipment progress with a boat. */
+function jmData(id) {
+  var j = S.jobs.filter(function (x) { return x.jobId === id; })[0]; if (!j) return null;
+  var cm = byJob(S.commitments, id), tx = byJob(lgExpandTx(S.transactions), id), docs = byJob(S.documents, id), qs = byJob(S.quotes, id);
+  var cfg = settings().rules, t = today(), s = lgSummarizeJob(j, cm, tx, docs, cfg, t);
+  var seal = S.sealed.filter(function (x) { return x.jobId === id && x.type === 'Sales PFI' && x.status === 'valid'; })[0];
+  return { j: j, cm: cm, tx: tx, docs: docs, qs: qs, s: s, cfg: cfg, t: t, seal: seal };
+}
+function jmLevel(done, due, hasData) { if (!hasData) return 'na'; if (done) return 'ok'; var d = dayDiff(due); return d !== null && d < 0 ? 'danger' : 'warning'; }
+function jmUsd(n) { return fmt(n, 0) + ' USD'; }
+function jmRows(rows, max) {
+  max = max || 5; var more = rows.length - max;
+  return rows.slice(0, max).map(function (r) { return '<div class="jm-r"><span>' + r[0] + '</span><b>' + r[1] + '</b></div>'; }).join('') + (more > 0 ? '<div class="jm-more">+ ' + more + ' more</div>' : '');
+}
+function jmCard(cls, level, icon, title, sub, body, onclick) {
+  return '<div class="jm-card jm-' + cls + ' lv-' + level + '"' + (onclick ? ' onclick="' + onclick + '" style="cursor:pointer"' : '') + '><div class="jm-h"><span class="jm-dot"></span><b>' + title + '</b><span class="sp"></span><span class="jm-ic">' + icon + '</span></div>' +
+    (sub ? '<div class="jm-sub">' + sub + '</div>' : '') + body + '</div>';
+}
+function jmBar(pct) { return '<div class="bar" style="margin:6px 0 8px"><i style="width:' + Math.max(0, Math.min(100, pct)) + '%"></i></div>'; }
+
+/* shipment progress: Supplier → Loading → At sea → Arriving → Arrival */
+function jmShip(D) {
+  var s = D.s, j = D.j, t = lgDay(D.t), etd = lgDay(s.etd), eta = lgDay(s.eta), notice = Number(D.cfg.ETA_NOTICE_DAYS) || 5;
+  var supDate = D.cm.filter(function (e) { return e.category === 'Supplier'; }).map(function (e) { return e.date; }).filter(Boolean).sort()[0] ||
+    D.tx.filter(function (x) { return x.dir === 'OUT' && x.category === 'Supplier'; }).map(function (x) { return x.date; }).filter(Boolean).sort()[0] || '';
+  var pos, phase, note;
+  if (etd === null) { pos = supDate ? 0.08 : 0; phase = 0; note = 'ETD not set'; }
+  else if (t < etd) {
+    var start = supDate ? lgDay(supDate) : (lgDay(j.pfiDate) || etd - 30);
+    pos = 0.25 * Math.max(0, Math.min(0.95, (t - start) / Math.max(1, etd - start))); phase = 0; note = 'Loading in ' + (etd - t) + ' day(s)';
+  } else if (eta === null || t < eta) {
+    var f = eta === null ? 0.3 : (t - etd) / Math.max(1, eta - etd);
+    pos = 0.25 + 0.75 * Math.max(0, Math.min(0.97, f)); phase = eta !== null && eta - t <= notice ? 3 : 2;
+    note = eta === null ? 'At sea · ETA not set' : (eta - t) + ' day(s) to arrival';
+  } else { pos = 1; phase = 4; note = 'Arrived ' + fmtD(s.eta); }
+  if (t >= etd && etd !== null && phase < 2) phase = 1;
+  var stops = [['Supplier', supDate ? fmtD(supDate) : '—'], ['Loading', fmtD(s.etd)], ['At sea', j.vessel ? esc(j.vessel) : ''], ['Arriving', s.eta ? 'from ' + fmtD(lgAddDays(s.eta, -notice)) : ''], ['Arrival', fmtD(s.eta)]];
+  var cur = etd === null ? 0 : t < etd ? 0 : (eta === null || t < eta) ? (eta !== null && eta - t <= notice ? 3 : 2) : 4;
+  var pct = (pos * 100).toFixed(1);
+  var boat = '<svg viewBox="0 0 40 26" width="36" height="24" aria-hidden="true"><path d="M3 15h34l-5 8H8z" fill="var(--acc)"/><rect x="12" y="7" width="13" height="8" rx="1" fill="var(--txt)"/><rect x="15" y="2" width="4" height="5" fill="var(--txt)"/><path d="M1 25c3-2 5-2 8 0s5 2 8 0 5-2 8 0 5 2 8 0 5-2 6 0" stroke="var(--acc)" stroke-width="1.2" fill="none"/></svg>';
+  return '<div class="jm-ship"><div class="jm-track"><div class="jm-fill" style="width:' + pct + '%"></div>' +
+    stops.map(function (x, i) { return '<span class="jm-stop' + (i <= cur ? ' on' : '') + '" style="left:' + (i * 25) + '%"></span>'; }).join('') +
+    '<div class="jm-boat" style="left:' + pct + '%">' + boat + '</div></div>' +
+    '<div class="jm-labels">' + stops.map(function (x, i) { return '<div class="' + (i === cur ? 'cur' : '') + '" style="left:' + (i * 25) + '%"><b>' + x[0] + '</b><span>' + x[1] + '</span></div>'; }).join('') + '</div>' +
+    '<div class="jm-note">' + esc(note) + (s.etd ? ' · ETD ' + fmtD(s.etd) : '') + (s.eta ? ' · ETA ' + fmtD(s.eta) : '') + (s.destPort || j.destPort ? ' · ' + esc(j.destPort || '') : '') + '</div></div>';
+}
+
+function viewJobMap(id) {
+  var D = jmData(id); if (!D) return viewMissing();
+  var j = D.j, s = D.s, jh = jobHash(id);
+  var units = (j.lines || []).reduce(function (a, l) { return a + (Number(l.qty) || 0); }, 0) || Number(j.units) || 0;
+  var models = (j.lines || []).filter(function (l) { return l.model; });
+  var margin = s.commit.Supplier > 0 && s.saleUSD > 0 ? Math.round(s.expectedMarginUSD / s.saleUSD * 100) : null;
+
+  // suppliers (left)
+  var sups = D.cm.filter(function (e) { return e.category === 'Supplier'; });
+  var supRows = sups.map(function (e) { return [esc(e.counterparty || 'Supplier') + '<br><small>' + [esc(e.reference || ''), e.date ? fmtD(e.date) : ''].filter(Boolean).join(' · ') + '</small>', fmt(e.amount, 0) + ' ' + esc(e.ccy)]; });
+  D.qs.forEach(function (q) { supRows.push([esc(q.supplier) + '<br><small>quote ' + esc(q.reference || '') + ' · ' + fmtD(q.date) + '</small>', fmt(q.amount, 0) + ' ' + esc(q.ccy)]); });
+  var supLv = jmLevel(s.due.Supplier === 0 && s.commit.Supplier > 0, s.deadlines.Supplier, sups.length > 0);
+  var supCard = jmCard('sup', supLv, '◧', 'Supplier' + (sups.length > 1 ? 's' : ''), sups.length ? s.pctSupplierPaid + '% paid · ' + jmUsd(s.paid.Supplier) + ' / ' + jmUsd(s.commit.Supplier) : 'No supplier PFI yet',
+    (sups.length ? jmBar(s.pctSupplierPaid) : '') + jmRows(supRows) + (s.due.Supplier > 0 ? '<div class="jm-r"><span>Balance due ' + fmtD(s.deadlines.Supplier) + '</span><b>' + jmUsd(s.due.Supplier) + '</b></div>' : ''), "location.hash='" + jh + "'");
+
+  // client (right)
+  var cliLv = D.seal && s.docsToSend === 0 && s.docsReceived >= s.docsRequired ? 'ok' : (s.docsToSend > 0 && dayDiff(s.etd) !== null && dayDiff(s.etd) < -Number(D.cfg.DOC_SEND_DAYS || 2) ? 'danger' : 'warning');
+  var cliRows = [['Sales PFI', esc(j.salesPfi || '—') + ' · ' + fmtD(j.pfiDate)], ['Sale', esc(j.incoterm || '') + ' ' + fmt(j.saleAmount, 0) + ' ' + esc(j.saleCcy || '')],
+    ['QR seal', D.seal ? '<span class="grn">' + esc(D.seal.code) + '</span>' : '<span class="amb">not sealed</span>'],
+    ['Documents', s.docsReceived + '/' + s.docsRequired + ' received'], ['To send client', s.docsToSend ? '<span class="amb">' + s.docsToSend + ' doc(s)</span>' : 'none']];
+  var cliCard = jmCard('cli', cliLv, '◨', esc(j.client || 'Client'), [j.country, j.destPort].filter(Boolean).map(esc).join(' · '), jmRows(cliRows, 6), "location.hash='" + jh + "'");
+
+  // receipts (top)
+  var ins = D.tx.filter(function (x) { return x.dir === 'IN'; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var inRows = ins.map(function (x) { return [fmtD(x.date) + ' · ' + esc(x.mode || 'Bank') + (x._parent ? ' <small>(split)</small>' : ''), fmt(x.amount, 0) + ' ' + esc(x.ccy)]; });
+  var recLv = jmLevel(s.receivableUSD === 0 && s.saleUSD > 0, s.deadlines.client, s.saleUSD > 0);
+  var recCard = jmCard('rec', recLv, '↓', 'Received ' + s.pctReceived + '%', jmUsd(s.receivedUSD) + ' of ' + jmUsd(s.saleUSD),
+    jmBar(s.pctReceived) + jmRows(inRows, 4) + (s.receivableUSD > 0 ? '<div class="jm-r due"><span>To receive by ' + fmtD(s.deadlines.client) + '</span><b>' + jmUsd(s.receivableUSD) + '</b></div>' : '<div class="jm-r"><span>To receive</span><b class="grn">nothing</b></div>'), "location.hash='payments'");
+
+  // payments (bottom)
+  var outs = D.tx.filter(function (x) { return x.dir === 'OUT'; }).sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+  var outRows = outs.map(function (x) { return [fmtD(x.date) + ' · ' + esc(x.category || '') , fmt(x.amount, 0) + ' ' + esc(x.ccy)]; });
+  var dueCats = COMMIT_CATEGORIES.filter(function (c) { return s.due[c] > 0; }).sort(function (a, b) { return (s.deadlines[a] || '9') < (s.deadlines[b] || '9') ? -1 : 1; });
+  var dueRows = dueCats.map(function (c) { var late = dayDiff(s.deadlines[c]) !== null && dayDiff(s.deadlines[c]) < 0; return '<div class="jm-r due' + (late ? ' late' : '') + '"><span>' + esc(c) + ' · due ' + fmtD(s.deadlines[c]) + '</span><b>' + jmUsd(s.due[c]) + '</b></div>'; }).join('');
+  var pctPaid = s.totalCommitUSD > 0 ? Math.round(s.totalPaidUSD / s.totalCommitUSD * 100) : 0;
+  var payLv = jmLevel(s.totalDueUSD === 0 && s.totalCommitUSD > 0, dueCats.length ? s.deadlines[dueCats[0]] : '', s.totalCommitUSD > 0);
+  var payCard = jmCard('pay', payLv, '↑', 'Paid ' + pctPaid + '%', jmUsd(s.totalPaidUSD) + ' of ' + jmUsd(s.totalCommitUSD) + ' committed',
+    jmBar(pctPaid) + jmRows(outRows, 4) + (dueRows || '<div class="jm-r"><span>To pay</span><b class="grn">nothing</b></div>'), "location.hash='" + jh + "'");
+
+  // centre
+  var centre = '<div class="jm-centre" onclick="location.hash=\'' + jh + '\'"><div class="jm-id">' + esc(id) + '</div><div class="jm-units">' + (units || '—') + ' vehicle' + (units === 1 ? '' : 's') + '</div>' +
+    '<div class="jm-models">' + (models.length ? models.slice(0, 3).map(function (l) { return esc(l.qty + ' × ' + l.model); }).join('<br>') + (models.length > 3 ? '<br>+ ' + (models.length - 3) + ' more' : '') : '<span class="mut">no vehicle lines</span>') + '</div>' +
+    '<div style="margin-top:6px">' + statusPill(s.status) + (margin !== null ? ' <span class="pill">margin ' + margin + '%</span>' : '') + '</div>' +
+    '<div class="jm-cash">Net cash ' + '<b class="' + (s.cashNetUSD < 0 ? 'red' : 'grn') + '">' + fmt(s.cashNetUSD, 0) + '</b> USD</div></div>';
+
+  app('<div class="row jm-top"><div><a href="#' + jh + '" class="hint">← ' + esc(id) + '</a><h1>Job map · ' + esc(j.salesPfi || id) + '</h1></div><span class="sp"></span><button onclick="window.print()">Print</button><button onclick="location.hash=\'' + jh + '\'">Job details</button></div>' +
+    '<div class="card">' + jmShip(D) + '</div>' +
+    '<div class="jm-grid" id="jmGrid"><svg class="jm-links" id="jmLinks"></svg>' +
+    '<div class="jm-a-rec">' + recCard + '</div><div class="jm-a-sup">' + supCard + '</div><div class="jm-a-mid">' + centre + '</div><div class="jm-a-cli">' + cliCard + '</div><div class="jm-a-pay">' + payCard + '</div></div>' +
+    '<div class="jm-legend"><span class="lv-ok"><i></i>done</span><span class="lv-warning"><i></i>in progress</span><span class="lv-danger"><i></i>overdue</span><span class="lv-na"><i></i>no data</span></div>');
+  requestAnimationFrame(jmLinks);
+}
+function jmLinks() {
+  var g = $('jmGrid'), svg = $('jmLinks'); if (!g || !svg) return;
+  var c = g.querySelector('.jm-centre'); if (!c || getComputedStyle(svg).display === 'none') return;
+  var gb = g.getBoundingClientRect(), cb = c.getBoundingClientRect(), cx = cb.left - gb.left + cb.width / 2, cy = cb.top - gb.top + cb.height / 2;
+  svg.setAttribute('viewBox', '0 0 ' + gb.width + ' ' + gb.height); svg.style.width = gb.width + 'px'; svg.style.height = gb.height + 'px';
+  var paths = '';
+  g.querySelectorAll('.jm-card').forEach(function (el) {
+    var b = el.getBoundingClientRect(), x = b.left - gb.left, y = b.top - gb.top, w = b.width, h = b.height, px, py, qx, qy;
+    if (el.classList.contains('jm-sup')) { px = x + w; py = y + h / 2; qx = cb.left - gb.left; qy = cy; }
+    else if (el.classList.contains('jm-cli')) { px = x; py = y + h / 2; qx = cb.right - gb.left; qy = cy; }
+    else if (el.classList.contains('jm-rec')) { px = x + w / 2; py = y + h; qx = cx; qy = cb.top - gb.top; }
+    else { px = x + w / 2; py = y; qx = cx; qy = cb.bottom - gb.top; }
+    var col = getComputedStyle(el).borderTopColor;
+    var horiz = el.classList.contains('jm-sup') || el.classList.contains('jm-cli');
+    var d = horiz ? 'M' + px + ' ' + py + ' C' + (px + qx) / 2 + ' ' + py + ' ' + (px + qx) / 2 + ' ' + qy + ' ' + qx + ' ' + qy : 'M' + px + ' ' + py + ' C' + px + ' ' + (py + qy) / 2 + ' ' + qx + ' ' + (py + qy) / 2 + ' ' + qx + ' ' + qy;
+    paths += '<path d="' + d + '" fill="none" stroke="' + col + '" stroke-width="2"/>';
+  });
+  svg.innerHTML = paths;
+}
+window.addEventListener('resize', function () { if (/^#map-/.test(location.hash)) jmLinks(); });
 </script>
 </body></html>
